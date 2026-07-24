@@ -1,8 +1,28 @@
-# Agent skills
+# Agent home
 
-My public agent skills — reusable, tried-and-tested prompts my coding agents load on demand through [Skillbox](https://github.com/hhushhas/skillbox).
+The working rules and reusable skills Hasan Shoaib uses across Claude Code, Codex, and Pi.
 
-Each skill is a folder under `skills/` with a `SKILL.md`: the frontmatter description is the trigger, the body is the brief. Some carry `references/` for fragile step-by-step procedures or `agents/` for per-agent config. Register a folder with Skillbox, or copy it into your agent's own skills directory.
+## Configs
+
+The two entry points share the same principles:
+
+- [`AGENTS.md`](./AGENTS.md) configures Codex-compatible agents.
+- [`CLAUDE.md`](./CLAUDE.md) configures Claude Code.
+
+Focused guidance lives in [`docs/`](./docs):
+
+- [`delegation.md`](./docs/delegation.md)
+- [`writing-style.md`](./docs/writing-style.md)
+- [`code-standards.md`](./docs/code-standards.md)
+- [`code-review.md`](./docs/code-review.md)
+
+Machine paths, credentials, account names, deployment identifiers, caches, session state, and private operational notes are intentionally excluded. The public files are the reusable policy layer, not a backup of a home directory.
+
+Copy the relevant entry point into a project or use it as the base for global agent instructions. Adjust paths and tool names to match your environment.
+
+## Skills
+
+Each skill is a folder under `skills/` with a `SKILL.md`: the frontmatter description is the trigger, the body is the brief. Some carry `references/` for fragile procedures or `agents/` for per-agent configuration. Register a folder with [Skillbox](https://github.com/hhushhas/skillbox), or copy it into an agent's own skills directory.
 
 | Skill | What it does |
 | --- | --- |
@@ -16,4 +36,8 @@ Each skill is a folder under `skills/` with a `SKILL.md`: the frontmatter descri
 | [spec-craft](skills/spec-craft) | Turn a rough product idea into a spec another agent can execute autonomously. |
 | [website-optimization](skills/website-optimization) | Evidence-based web performance audits — measure first, then fix. |
 
-Some skills reference my local setup (`~/.agents/reading-room`, `~/.codex/writing-style.md`); adapt those paths to your own environment.
+Some skills reference local paths. Adapt those paths to your own environment.
+
+## License
+
+MIT
