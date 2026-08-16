@@ -1,4 +1,0 @@
-interface:
-  display_name: "Claude Explain"
-  short_description: "Ask Claude for a neutral simple explanation"
-  default_prompt: "Use $claude-explain to ask Claude to explain this clearly without Codex framing."

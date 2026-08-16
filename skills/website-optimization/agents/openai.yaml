@@ -1,4 +1,0 @@
-interface:
-  display_name: "Website Optimization"
-  short_description: "Local website speed and SEO optimization"
-  default_prompt: "Use $website-optimization to audit this website, optimize it locally without UI drift, validate in proportion to the change, then open the local result for inspection."

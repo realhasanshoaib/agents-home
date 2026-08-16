@@ -1,38 +1,86 @@
 ---
 name: spec
-description: Use when the user wants to create, update, or review a spec.
+description: "Use when creating or improving a product or implementation spec before substantial execution, especially when Hasan wants a flexible spec that helps Codex run autonomously without forgetting product, UX, architecture, data, testing, or anti-slop context."
 ---
 
-Help shape the spec into a useful thinking surface, not a rigid template. Preserve the project’s natural form while making sure the worker has enough context to execute well: product intent, non-goals, primary workflows, canonical language/ubiquitous terms, UI/UX expectations, architecture and system boundaries, data model and source-of-truth rules, feature behavior, failure/offline behavior, testing and verification gates, implementation phases, and project-specific anti-slop rules.
+Help shape the spec into a useful thinking surface, not a rigid template. Preserve the
+project's natural form; the sections below are what to *consider*, weighted by how much
+each one usually matters — not headings to fill in.
 
-**The spec's philosophy: it argues from states, not tasks.** A spec opens with the background — the problem in plain words, the **current state** of the system, and the **desired state** — and the desired state is described as behavior and outcomes (what the world looks like when this is done), never as implementation. Implementation comes briefly at the end, once the destination is unambiguous; a reader should be able to challenge the destination without wading through the route. This ordering is where the visualizations earn their keep: the current and desired states are exactly what the system views in `~/.pi/agent/packages/portable-pi-setup/support/examples/` render — the same view shown twice (or with a before/after toggle) so the gap between today and the goal is visible, not narrated.
+**The spec argues from states, not tasks.** It opens with the background — the problem
+in plain words, the **current state** of the system, and the **desired state** — and the
+desired state is described as behavior and outcomes (what the world looks like when this
+is done), not as implementation. Implementation follows once the destination is
+unambiguous, and it can go as deep as the work needs — the ordering is the rule, not
+brevity. A reader should be able to challenge the destination without wading through
+the route.
 
-A spec should read as a coherent whole, not as a chronological transcript of how the conversation evolved. Session logs, decision history, and "we changed our mind" breadcrumbs belong in a session log or scratchpad, not the spec. Fold settled decisions into the relevant section, keep only intentional TODOs/open decisions, and remove stale scaffolding once the user closes it.
+A spec reads as a coherent whole, not a chronological transcript. Decision history and
+"we changed our mind" breadcrumbs belong in a session log; fold settled decisions into
+the relevant section, keep only intentional open decisions, and remove stale scaffolding
+once the user closes it.
 
-Every spec defines done explicitly. The executor is literal and will keep working until the words are satisfied, so an open-ended spec is an open-ended budget: write acceptance criteria as observable checks — what exists, what passes, what a user can now do — and state where the work stops, including what is deliberately out of scope or good-enough as-is. When a spec is large enough to span phases or sessions, give it a checklist: phase-level checkboxes the worker ticks as each piece lands, so progress is visible at a glance, work is resumable mid-flight, and nobody has to re-derive state from the diff.
+# What a spec covers, in order of weight
 
-When the spec will be executed by an agent fleet, specify the orchestration in the spec itself: the seams and who owns each (explorer, researcher, worker, advisor, or a lane orchestrator for a big seam), the interface contracts between pieces that share a boundary, what runs in parallel versus what must wait for real output, and where the verification gates sit. A spec that pre-decides the decomposition saves the orchestrator from re-deriving it under pressure, and the checklist then maps one-to-one onto lanes and phases.
+1. **Background** — problem, current state, desired state. If this is wrong, nothing
+   downstream survives.
+2. **Done** — acceptance criteria as observable checks (what exists, what passes, what a
+   user can now do) and where the work stops. The executor is literal and will keep
+   working until the words are satisfied; an open-ended spec is an open-ended budget.
+   State what is deliberately out of scope or good-enough as-is.
+3. **Behavior** — primary workflows, feature behavior, failure/offline behavior.
+4. **Language** — canonical/ubiquitous terms, so the spec, the code, and the
+   conversation use the same words.
+5. **System** — architecture and boundaries, data model and source-of-truth rules.
+6. **UI/UX expectations** — for frontend work, the companion carries preview prototypes
+   (see `references/html-companion.md`); the markdown states the expectations in words.
+7. **Implementation** — the route to the destination, at whatever depth the work needs.
+8. **Execution** — phases rendered as a **dependency DAG**: a Mermaid flowchart in the
+   markdown with phases/seams as nodes, hard dependencies as edges, parallel work side
+   by side, and verification gates as diamond nodes. Cut the DAG at real seams: parallel
+   nodes share no files, no decisions, and no discoveries — if two lanes depend on what
+   one exploration will find, hoist that exploration into its own upstream node and feed
+   both; a long dependent chain is one node, not a lane. Place a gate wherever
+   downstream work builds on an upstream node's output, and close every fan-out with an
+   explicit integration node where the orchestrator reconciles the lanes — diagnosis,
+   decisions, integration, and sign-off are orchestrator-owned and never assigned to a
+   worker lane. When an agent fleet executes the spec, each node carries its owner, its
+   interface contract with neighbors, its deliverable, and its scope fence (what it must
+   not touch). For multi-phase or multi-session specs, add a phase-level checklist that
+   maps one-to-one onto the DAG's nodes so progress is visible and work is resumable.
+9. **Anti-slop rules** — project-specific traps the worker must not fall into.
 
-# HTML companion (required)
+Use Mermaid diagrams in the markdown itself wherever a diagram carries more than prose —
+workflows, data model, state machines, and always the execution DAG. GitHub and most
+viewers render them, and executors read the markdown, not the HTML.
 
-Every spec ships as two files: the markdown spec (source of truth for executors) and a companion HTML next to it (`<spec-name>.html`) built for the user to actually read. the reader should not have to read walls of prose — the HTML exists so the spec can be absorbed visually in minutes. Regenerate the HTML whenever the markdown changes; a stale HTML is worse than none.
+# HTML companion
 
-The companion is a collaboration surface, not an end-of-process deliverable. Build the first draft **early** — as soon as the shape of the problem is clear, well before the spec is settled — with status `draft`, and register it in the Reading Room immediately — put `register="spec" project="…" risk="…" summary="…"` on the `<rr-doc>` tag and the kit build writes the registry line itself (`~/.agents/reading-room/` is the single canonical registry; fall back to `~/.pi/agent/reading-room/` with a manual line only where `~/.agents` does not exist). Then evolve it through every round of back-and-forth. The reason: the user is busy and context-switching, and a decision question asked cold in chat forces them to rebuild the premise from memory — that mental tax is exactly what the companion exists to remove. So **never ask the user a spec decision blind**: before asking, put the decision on the page as a decision card (premise, options with trade-offs, your recommendation — see `references/html-companion.md`), and let the chat question point at the card. They decide from the page, where the background, current state, and desired state are already in front of them.
+Every spec ships as two files: the markdown (source of truth for executors) and a
+companion HTML next to it (`<spec-name>.html`) built for the user to absorb visually in
+minutes. Deck format by default; regenerate whenever the markdown changes — a stale
+HTML is worse than none. **How to build it — sizing, formats, structure, system views,
+preview prototypes, mini worlds, story players, decision cards, images — is in
+`references/html-companion.md`; read it before producing any companion.**
 
-The companion comes in two formats, both composed from the Reading Room Kit (read `~/.agents/reading-room/kit/README.md`, write a `.rr.html` of `<rr-*>` components, build with `node ~/.agents/reading-room/kit/build.mjs`) — **deck** (`rr-deck`/`rr-slide`, one concept per screen; best for a first linear read) or **document** (one scrolling page; best as a reference to jump around). **The deck is the default** — build slides unless the user asks for the document format. In the deck, chunk *inside* each slide with `rr-beat` so ideas arrive step by step instead of all at once — a beat is one step of the argument, never one bullet of a list (the kit README's Decks section is the guide; visual canon: `~/.agents/html-slides-template.md`). Everything below applies identically in both formats.
+Three workflow rules live here because they shape the collaboration, not the artifact:
 
-The HTML opens with a **Background** section that sets the premise before any spec content, mirroring the spec's states-not-tasks philosophy: the problem in plain words, then the **current state** and the **desired state** of the system rendered as system views from the reference gallery (`~/.pi/agent/packages/portable-pi-setup/support/examples/` — read its README; the same view twice, or one view with a today/goal toggle, so the gap is visible rather than narrated). Written for someone with zero context, short prose (a doorstep, not a chapter) — the states carry the weight visually. Implementation appears only near the end, briefly.
+- **Draft early.** Build the first companion as soon as the shape of the problem is
+  clear — status `draft`, registered in the Reading Room immediately (`register="spec"`
+  on the `<rr-doc>` tag) — and evolve it through every round of back-and-forth.
+- **Never ask a spec decision blind.** Before asking the user to decide anything, put
+  the decision on the page as a decision card (premise, options with trade-offs, your
+  recommendation, the default if they don't decide), and let the chat question point at
+  the card.
+- **Let them read.** After shipping or updating a draft, end your turn: say it's ready,
+  point at the open decision cards, and stop. Do not follow a fresh draft with a list of
+  questions in chat — the user hasn't read it yet, and the cards already hold everything
+  that needs deciding.
 
-When the change is **user-facing**, also include a **user story that plays like a video**: an auto-playing scripted scenario built on the `story-player.html` pattern from the gallery — one concrete user living through the change on a mocked screen, with play/scrub controls, captions, and the old-vs-new behavior contrast as the climax. This is how the user experiences the desired state before deciding on it.
+# Critique pass
 
-When the spec touches the **UI** in any way, the companion includes **high-fidelity interactive mockups** of the affected interface — real inline HTML/CSS (with vanilla JS for the interactions) styled in the **target application's own design language** — mine its real tokens and components from its codebase and reproduce them exactly, inside the kit's `rr-mockup` product frame (shadow-isolated, so the document's design system never touches the mock) — not wireframes, prose descriptions, or a generic layout in the reading-room look. The bar: the mock is indistinguishable from a screenshot of the shipped feature. Coverage is total: every UI change in the spec gets a mockup — if five changes span the interface, all five appear. Size each mockup by its scope: an individual **component** renders as just the component, so several component mockups can share one view or slide; a **full view, layout, or page layout** takes the entire space — the `.fullbleed` section or a full-bleed slide — so its proportions and hierarchy read as they will in the real thing. Conventions in `references/html-companion.md`.
-
-Write all prose to `~/.agents/writing-rules.md` (Orwell's six rules — review the copy against them before delivering), and write the HTML in the language of explaining, not technical shorthand: prefer the plain phrase over the term of art, and never let a sentence depend on a word the user can't be expected to know. Every technical term, acronym, or project codename gets a **hover definition** — one or two everyday-words sentences shown on hover and on keyboard focus, applied to every occurrence (readers may jump around the page), with a dotted underline so hoverable terms are visible. The pattern lives in `references/html-companion.md`.
-
-The HTML shows **no walls of source code** — behavior is explained in plain language, structure as maps and diagrams; implementation-body code stays in the markdown for executors. Two structural exhibits are the exception, and they are first-class whenever the spec touches real code architecture: the **shapes** of the key functions (`rr-types` — each one's inputs and outputs, written as `(input: Shape) → Outcome`) and the **intended call stack** (`rr-stack` — who will call whom once this lands, with new frames toned `new`). Signatures-and-stack is the level at which the user reviews the abstractions — whether the seams are right, whether an outcome is a value or a smuggled boolean — without reading bodies; when the change restructures existing code, pair current and intended in `rr-panes` (before/after) so the structural cost or payoff is visible at a glance. Present these as collapsed optional depth for one-off or internal features, expanded when the spec's core is architectural. A specific piece of code that genuinely carries a point goes in a collapsed, annotatable `rr-code` exhibit (a handful at most), never as snippets in prose.
-
-When the spec describes behavior — workflows, state changes, rules with inputs and outcomes — include a **mini world**: a small interactive simulation of the *intended* behavior in vanilla JS (toggles, sliders, click-through flows with plain-language narration) so the user can poke the proposed system before a line of it exists. It must model this spec faithfully, edge cases and failure modes included — playing with it is how spec problems get caught before implementation. Give it the full screen: the shared template's `.fullbleed` section (or full-bleed slide in the deck) with a fullscreen toggle, never squeezed into the prose column. Skip it only when the spec genuinely has no dynamic behavior to model.
-
-The HTML is visual-first: default to rendering a concept visually and demote prose to captions, not the other way around. Four core methods, all first-class: **gallery system views** (architecture, current/desired state), **Mermaid diagrams** (workflows, data model, states, phases, orchestration), **generated images** (the imagegen tool — concept illustrations, before/after renderings, anything a picture carries better than boxes), and the **mini world** (dynamic behavior). Generated images are a core part of the spec HTML, not a separate nice-to-have — reach for them as readily as for a diagram. `references/html-companion.md` holds the content-to-visualization mapping, the image conventions, and the diagram quality rules; it builds on the shared shell in `~/.pi/agent/packages/portable-pi-setup/support/html-template.md` so every document feels consistent.
-
-When the spec is substantial or high-risk, use one or two capable workers to critique it for blind spots, ambiguity, missing constraints, risky assumptions, and execution traps when worker tooling is available and appropriate; then fold the useful feedback back into the spec or summarize recommended patches for the user. Keep the process flexible and judgment-led: expand only where it materially improves execution, and push back when the spec is too vague, over-scoped, or likely to mislead the implementation worker.
+Have one or two capable workers critique it for blind spots, ambiguity, missing constraints,
+risky assumptions, and execution traps, then fold the useful feedback back in or
+summarize recommended patches for the user. Skip it only for small, settled specs. And
+push back yourself when the spec is too vague, over-scoped, or likely to mislead the
+implementation worker.
