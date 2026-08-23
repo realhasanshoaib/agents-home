@@ -1,0 +1,51 @@
+rules:
+  - id: agents.typescript.no-type-assertions
+    languages: [typescript]
+    severity: ERROR
+    message: Type assertions are banned ("as const" is fine). Narrow with a real type guard, a discriminated union, or schema validation at the boundary.
+    paths:
+      exclude:
+        - "**/dist/**"
+        - "**/build/**"
+        - "**/_generated/**"
+        - "**/node_modules/**"
+    patterns:
+      - pattern: $X as $TYPE
+      - pattern-not: $X as const
+
+  - id: agents.typescript.no-shapeless-records
+    languages: [generic]
+    severity: ERROR
+    message: Shapeless record types erase the domain shape. Model the real shape, or validate with a schema at the boundary.
+    paths:
+      include:
+        - "**/*.ts"
+        - "**/*.tsx"
+      exclude:
+        - "**/dist/**"
+        - "**/build/**"
+        - "**/_generated/**"
+        - "**/node_modules/**"
+        - "**/*.test.*"
+    pattern-regex: \bRecord<\s*(?:any|unknown)\s*,|\bRecord<[^<>]*,\s*(?:any|unknown)\s*>|\[\w+\s*:\s*string\]\s*:\s*(?:any|unknown)\b
+
+  - id: agents.typescript.no-shape-erasing-guards
+    languages: [generic]
+    severity: ERROR
+    message: isRecord-style guards launder unknown into a shapeless record. Write a guard or schema for the actual domain shape.
+    paths:
+      include:
+        - "**/*.ts"
+        - "**/*.tsx"
+      exclude:
+        - "**/dist/**"
+        - "**/build/**"
+        - "**/_generated/**"
+        - "**/node_modules/**"
+    pattern-regex: \bisRecord\s*[(<:=]|\bis\s+Record<\s*(?:any|unknown|string)\b
+
+  - id: agents.javascript.require-suppression-justification
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: Suppressions need an adjacent justification.
+    pattern-regex: (?m)^\s*//\s*(?:@ts-ignore|@ts-expect-error|eslint-disable(?:-next-line|-line)?|nosemgrep)(?!.*(?:because|reason|justification|intentional|safe|false positive|false-positive)).*$
