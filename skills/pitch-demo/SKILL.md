@@ -1,38 +1,37 @@
 ---
 name: pitch-demo
-description: Use when Hasan asks to build a demo to pitch a company, such as cloning their website with a live Ava voice agent on it (like OnTime), or rebuilding their application with Flow (like Mercury).
+description: Use when Hasan asks to build a demo to pitch a company, such as cloning their website with a live Ava voice agent on it (like OnTime), rebuilding their application with Flow (like Mercury), or a custom workflow prototype (like the Future Divine RFQ desk).
 disable-model-invocation: true
 ---
 
 # Build a demo for a prospect
 
-A pitch exists to get the decision maker to reply and take one next step. We put our product to work on a piece of the prospect's own world, deploy it on `<prospect>.q9labs.ai`, record a short video when asked, and wrap it in an HTML deck at `/proposal/`, which is the one link we send. Every part is judged against `rubric.md`, and nothing goes out until each of its six areas scores 9 or more. The product decides the build steps: `ava.md` for a voice agent on their website, `flow.md` for a voice guide that fills their application. A run started from make-demo.q9labs.ai also follows `make-demo.md`.
+A pitch exists to get the decision maker to reply and take one next step. We put our product to work on a piece of the prospect's own world, deploy it on `<prospect>.q9labs.ai`, record a short video when asked, and wrap it in an HTML deck at `/proposal/`, which is the one link we send. `rubric.md` says what a 9 looks like in each area, and every applicable area must reach 9 the first time, because the brief settles every claim and decision before anything is built.
 
-1. **Research.** In one Q9 Brain `recall`, read the prospect's Relationship, any meeting recording or RFQ, and the related Canon. Then research their business from public sources: what they sell and to whom, what they already offer (hours, chat, WhatsApp, languages), their competitors, recent news, and who decides. For a cold prospect, add the proof from step 3 of `/Users/macmini/code/q9-pitch/docs/sales-workflow.md`; never run a reply-speed test on anyone we've met. Save every fact with its source in `research.md` in the demo repo.
-2. **Write the brief** in `brief.md`: who decides and what they fear, their pain points strongest first with sources, the one moment the demo proves, what is real and what is only proposed, the one next step we ask for with a date, the deck's words slide by slide, and the ten scripted questions the demo must answer right. Done when Hasan has said yes to it. Builders work from the brief and don't invent claims, slides or asks that aren't in it.
-3. **Rebuild only the pages the demo touches**, in their layout, colours, fonts, logo and images, from public sources and never their customers' data. Put a footer on every page: "Concept demo by Q9 Labs. Not affiliated with <company>." Add `noindex` and a preview card (title, description, image). Fix what a visitor would notice at 1440 px and 390 px, and stop there; spacing a buyer wouldn't see never holds up a pitch.
-4. **Put the product in it, working live**, as the product file says. It must do the hard part from the brief, not only the intake.
-5. **Deploy** it as its own Cloudflare Worker on `<prospect>.q9labs.ai`, with `workers_dev: false`. Before deploying, check every vendor account it calls has credit and allows calls (for Ultravox, `GET https://api.ultravox.ai/api/accounts/me` shows `allowedConcurrentCalls` above 0). Done when the link works on a phone outside the tailnet and the ten scripted questions get right answers.
-6. **Record the video** only when it was asked for, as `rubric.md` section 6 says. Caption it once, burned in or as a caption file, never both. Put it on the demo site at `/journey/`. For OnTime, `/Users/macmini/code/ontime-site-clone/scratchpad/live-take-harness-2026-10-14/run.sh` recorded live takes with a generated visitor voice, and `/Users/macmini/code/ontime-journey-demo/combined/build.sh` cut them with captions and a music bed.
+The lead decides what is true and what we ask for, in the brief. Builders implement the brief, prove each acceptance case, and return any gap to the lead instead of filling it themselves.
+
+1. **Research.** Read the prospect's Relationship, any meeting recording or RFQ, and the related Canon in Q9 Brain to the end, paging any result that comes back cut. Then research their business from public sources: what they sell and to whom, what they already offer (hours, chat, WhatsApp, languages), their competitors, recent news, and who decides. For a cold prospect, add the proof from step 3 of `/Users/macmini/code/q9-pitch/docs/sales-workflow.md`; never run a reply-speed test on anyone we've met. Write `research.md` in the demo repo in four parts: sourced facts, what the buyer said, our assumptions, and unknowns.
+2. **Write the brief.** Copy `brief-template.md` to `brief.md` in the demo repo and fill in every field. Done when Hasan has said yes to it.
+3. **Rebuild only the pages the demo touches**, in their layout, colours, fonts, logo and images, from public sources and never their customers' data. Put a footer on every page: "Concept demo by Q9 Labs. Not affiliated with <company>." Add `noindex` and a preview card (title, description, image). Fix what a visitor would notice at 1440 px and 390 px, and stop there.
+4. **Build the product journey** the brief names: `ava.md` for a voice agent on their website, `flow.md` for a voice guide that fills their application, or, for a custom workflow, the one journey, data and simulation boundary the brief specifies. It must do the brief's hard case, not only the intake.
+5. **Deploy** it as its own Cloudflare Worker on the hostname in the brief, with `workers_dev: false`. Done when every acceptance case in the brief passes on the deployed site, with the result saved in `acceptance.md`.
+6. **Record the video** only when it was asked for, from the brief's video plan. Try the sequence on a free local take first, record paid takes only after it works, and use only a take that passes the brief's take rules. Cut it to 30 to 60 seconds with one visible caption layer, counting any captions the widget shows, and label simulated steps. Put it at `/journey/`. For OnTime, `/Users/macmini/code/ontime-site-clone/scratchpad/live-take-harness-2026-10-14/run.sh` recorded live takes with a generated visitor voice, and `/Users/macmini/code/ontime-journey-demo/combined/build.sh` cut them with captions and a music bed.
 7. **Build the deck** at `/proposal/` on the same Worker, from the brief's words, as `deck.md` says, and apply the `squint` skill.
-8. **Check the facts.** A lane lists every claim the deck, the email, the video and the agent's answers make about the prospect, their trade or us, and checks each against `research.md` and its source. Fix or cut every claim it can't back.
-9. **Judge it.** A fresh lane that built nothing scores the pitch against `rubric.md` and lists what keeps each area below 9. Send the findings back to the lanes that built the work, then judge again. After three rounds, stop and show Hasan the scores and what's left.
-10. **Write the email** with the `write-email` skill, from whoever owns the relationship. It carries the deck link and the brief's one next step. For a cold prospect, also use `reach-out` for their other channels. Whoever asked for the demo reviews the deck, the video and the email, and sends them.
-11. **Check before it goes.** On the day of sending, start one real call from inside the deck on a phone, and read the email once more for the link and the ask. Do the same before every follow-up.
+8. **Draft the email** with the `write-email` skill, from the relationship owner, with the deck link and the brief's ask, in the brief's words.
+9. **Check the facts.** A lane lists every claim the deck, the email, the video and the agent's answers make about the prospect, their trade or us, and checks each against `research.md` and its source. Every claim it can't back goes back to the lead, who fixes or cuts it.
+10. **Run the pre-send check**, `scripts/precheck.sh` in this skill, against the deck URL and the email draft. It fails on a missing deck link or ask in the email, our team or cost in anything the prospect sees, a vendor account with no credit, a call that won't start, or a slide count over the limit, and it writes contact sheets of every slide at 1440 × 900 and 390 px.
+11. **Show and send.** The lead reads the contact sheets, `acceptance.md` and the email against the brief, then shows whoever asked for the demo the deck, the video and the email. They send it. On the day it goes, and before every follow-up, run the pre-send check again.
 12. **Log it** in Q9 Brain in one `note`: the demo URL and the decisions as a Fact, the send as an Interaction once it went, and the dated follow-ups as Next actions.
 
 Nothing the prospect sees shows our side of the cost: no team size or make-up, roles, hours, person-weeks, day rates, vendor costs or margin, because headcount and time let them work out what the work costs us. The deck, the email and the PDF show only what they pay and one delivery time from signing to go-live.
 
-Show whoever asked for the demo the screenshots, the video, the deck and the judge's scores before step 10. Spend over 1 USD on voices, faces or generation needs Hasan's yes first. Aim to have the pitch ready within one working day of Hasan's yes to the brief.
+Spend over 1 USD on voices, faces or generation needs Hasan's yes first. Aim to have the pitch ready within one working day of Hasan's yes to the brief.
 
 ## Who builds
 
-Judgment happens once, up front, in the brief and the rubric, so the cheaper models can build against a precise target.
-
 | Work | Model |
 | --- | --- |
-| The brief (pain, proof moment, the ask, the deck's words, the ten questions), Ava's prompt, and answering lanes | Opus 5.5 high, the lead |
+| The brief, Ava's prompt, the final read before showing, and every gap a lane returns | Opus 5.5 high, the lead |
 | Gathering research facts with sources, and the fact check | GPT-6 Luna xhigh, or Haiku 5.5 high when it needs Q9 Brain |
-| The pages, the deck layout from the brief's words, choosing and cutting the video take | Sonnet 5.5 medium |
-| Deploying, the vendor and phone checks, recording takes, the PDF, the Gmail draft, the Brain log | Haiku 5.5 high |
-| Judging against `rubric.md` | GPT-6.1 Sol xhigh, in a fresh lane that built nothing |
+| The pages, the product journey, the deck layout from the brief's words, and cutting the video | Sonnet 5.5 medium |
+| Deploying, running the acceptance cases and the pre-send check, recording takes, the PDF, the Gmail draft, the Brain log | Haiku 5.5 high |
