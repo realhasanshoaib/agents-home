@@ -1,6 +1,7 @@
 import { readFile, mkdir, mkdtemp, rm, copyFile } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { createRequire } from 'node:module';
+import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 
 const usage = 'precheck.sh --deck <url> --email <path> [--max-slides N] [--ultravox-key <op:// ref>] [--out <dir>]';
@@ -125,16 +126,34 @@ try {
   temp = await mkdtemp(join(out, '.precheck-'));
   for (const [label, width, height] of [['desktop', 1440, 900], ['phone', 390, 844]]) {
     await page.setViewportSize({ width, height });
+    const fingerprints = new Set();
     for (let i = 0; i < count; i++) {
       const slide = slides.nth(i);
-      if (width === 1440) {
-        // Both current decks expose show(index); it loads lazy embeds and updates branding.
-        await page.evaluate(index => {
-          if (typeof window.show !== 'function') throw new Error('Deck lacks show(index) navigation');
-          window.show(index);
-        }, i);
+      const inView = () => slide.evaluate(el => {
+        const box = el.getBoundingClientRect();
+        const left = Math.max(0, box.left), right = Math.min(innerWidth, box.right);
+        const top = Math.max(0, box.top), bottom = Math.min(innerHeight, box.bottom);
+        if (right <= left || bottom <= top) return false;
+        const front = document.elementFromPoint((left + right) / 2, (top + bottom) / 2);
+        return front?.closest('.slide') === el;
+      });
+      await page.evaluate(index => {
+        if (typeof window.show === 'function') window.show(index);
+      }, i);
+      await slide.evaluate(el => el.scrollIntoView({ block: 'start', behavior: 'instant' }));
+      await page.waitForTimeout(400);
+      if (!await inView()) {
+        // Reset a clamped keyboard deck at the start of each viewport pass.
+        if (i === 0) {
+          for (let step = 0; step < count; step++) await page.keyboard.press('ArrowLeft');
+          await page.waitForTimeout(400);
+        }
+        for (let step = 0; step < count && !await inView(); step++) {
+          await page.keyboard.press('ArrowRight');
+          await page.waitForTimeout(400);
+        }
       }
-      await slide.evaluate(el => el.scrollIntoView({ block: 'start' }));
+      if (!await inView()) throw new Error(`${label} slide ${i + 1}: navigation did not reveal the intended slide`);
       await slide.waitFor({ state: 'visible' });
       await page.evaluate(() => document.fonts.ready);
       await slide.locator('img').evaluateAll(images => Promise.all(images.map(img =>
@@ -146,7 +165,11 @@ try {
       await page.waitForTimeout(400);
       scan(`${label} slide ${i + 1}`, await slide.innerText());
       const path = join(out, `${label}-${String(i + 1).padStart(2, '0')}.png`);
-      await page.screenshot({ path, animations: 'disabled', timeout: 20000 });
+      if (!await inView()) throw new Error(`${label} slide ${i + 1}: intended slide left the viewport before capture`);
+      const png = await page.screenshot({ path, animations: 'disabled', timeout: 20000 });
+      const fingerprint = createHash('sha256').update(png).digest('hex');
+      if (fingerprints.has(fingerprint)) throw new Error(`${label} slide ${i + 1}: duplicate slide screenshot`);
+      fingerprints.add(fingerprint);
       const box = await slide.boundingBox();
       if (box && box.height > height + 1) {
         // Preserve the rest of a stacked phone slide as well as its exact-size viewport shot.
@@ -160,7 +183,7 @@ try {
   }
   scanned = true;
   captured = true;
-  check('slide screenshots', true, `${count} slides at 1440×900 and 390×844; extra whole-slide PNGs for tall slides in ${out}`);
+  check('slide screenshots', true, `${count} distinct slides verified at 1440×900 and 390×844; extra whole-slide PNGs for tall slides in ${out}`);
   for (const label of Object.keys(shots)) {
     // Keep sheets to four slides so each remains readable at two tiles wide.
     for (let i = 0; i < shots[label].length; i += 4) {
