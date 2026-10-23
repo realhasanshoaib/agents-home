@@ -47,18 +47,40 @@ refspecs=""
 for b in ${branches[@]+"${branches[@]}"}; do refspecs+=" $(printf %q "+refs/heads/$b:refs/remotes/origin/$b")"; done
 token=${BOX_GITHUB_TOKEN:-$(gh auth token)} || exit 1
 
+# Machines whose box call on this Mac has died, and kept machines older than
+# 2 hours, would hold a slot forever, so every run deletes them first.
+host=$(hostname -s)
+instabox ls --meta box=1 --meta "host=$host" --json | python3 -I -c '
+import datetime, json, os, sys
+now = datetime.datetime.now(datetime.timezone.utc)
+for m in json.load(sys.stdin):
+    meta = m.get("metadata", {})
+    age = now - datetime.datetime.fromisoformat(m["createdAt"].replace("Z", "+00:00"))
+    if meta.get("keep") == "1":
+        if age > datetime.timedelta(hours=2):
+            print(m["name"])
+        continue
+    try:
+        os.kill(int(meta.get("pid", "0")), 0)
+    except (ProcessLookupError, ValueError):
+        print(m["name"])
+    except PermissionError:
+        pass' | while read -r stale; do
+  instabox rm "$stale" >/dev/null 2>&1 && echo "box: deleted $stale, left behind by a run that ended" >&2
+done
+
 slug=$(basename "$repo" | tr 'A-Z' 'a-z' | tr -c 'a-z0-9\n' '-' | cut -c1-20)
 name="box-$slug-$(date +%H%M%S)-$$"
 start=$(date +%s)
 waiting=0
-until error=$(instabox create --name "$name" --snapshot "$snapshot" --no-vault --secrets none --meta box=1 2>&1 >/dev/null); do
-  read -r count limit < <(instabox usage --json | python3 -I -c 'import json, sys; d = json.load(sys.stdin); print(d["machines"], d["limits"]["maxMachines"])')
-  ((count >= limit)) || { echo "box: could not create $name: $error" >&2; exit 1; }
-  ((waiting)) || echo "box: all $limit machines are in use, waiting for one..." >&2
+until error=$(instabox create --name "$name" --snapshot "$snapshot" --no-vault --secrets none --meta box=1 --meta "host=$host" --meta "pid=$$" --meta "keep=$keep" 2>&1 >/dev/null); do
+  [[ $error == *quota_exceeded* ]] || { echo "box: could not create $name: $error" >&2; exit 1; }
+  ((waiting)) || echo "box: all machines are in use, waiting for one..." >&2
   waiting=1
   sleep 30
 done
 ((keep)) || trap 'instabox rm "$name" >/dev/null 2>&1 || echo "box: could not delete $name, remove it with: instabox rm $name" >&2' EXIT
+trap 'exit 130' INT TERM HUP
 echo "box: $name is up after $(( $(date +%s) - start ))s, running $sha" >&2
 
 # The token arrives on stdin, is used for one fetch, and is never stored on the
