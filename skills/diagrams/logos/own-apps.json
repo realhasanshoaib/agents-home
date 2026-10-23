@@ -1,0 +1,96 @@
+{
+  "checked": "2026-10-23",
+  "scope": "Q9 deck inventory plus Kaadr, Sip, Bolo and Recruiter; source checkouts, not store-release verification.",
+  "apps": {
+    "Ava": {
+      "file": "ava.webp",
+      "status": "available"
+    },
+    "Nura": {
+      "file": "nura.webp",
+      "status": "available"
+    },
+    "Chalk": {
+      "file": "chalk-wordmark.webp",
+      "status": "available"
+    },
+    "Flow": {
+      "file": "flow.webp",
+      "status": "available"
+    },
+    "Track": {
+      "file": "track.svg",
+      "status": "available"
+    },
+    "Edli": {
+      "file": "edli.webp",
+      "status": "available"
+    },
+    "Murmur": {
+      "file": "murmur.png",
+      "status": "available"
+    },
+    "Saypad": {
+      "file": "saypad.svg",
+      "status": "available"
+    },
+    "Spend": {
+      "file": "spend.webp",
+      "status": "available"
+    },
+    "Diet Bite Life": {
+      "file": "diet-bite-life.png",
+      "status": "available"
+    },
+    "Super Alarm": {
+      "file": "super-alarm.png",
+      "status": "available"
+    },
+    "Sip": {
+      "file": "sip.svg",
+      "status": "available"
+    },
+    "Bolo": {
+      "file": "bolo.png",
+      "status": "available"
+    },
+    "Kaadr": {
+      "file": "kaadr.png",
+      "status": "available"
+    },
+    "Q9 Chat": {
+      "file": "q9-chat.svg",
+      "status": "available"
+    },
+    "Q9 Labs": {
+      "file": "q9-labs.svg",
+      "status": "available",
+      "role": "company brand"
+    },
+    "Recruiter": {
+      "file": "q9-labs.svg",
+      "status": "shared_brand",
+      "note": "The portal logo is Q9 Labs branding, not a distinct Recruiter mark. Nura is the recruitment brand in the Q9 deck."
+    },
+    "Wakeel": {
+      "file": null,
+      "status": "unverified",
+      "note": "Current scripted demo uses its name as text; no dedicated logo found."
+    },
+    "Voxa": {
+      "file": null,
+      "status": "unverified",
+      "note": "Local logo.svg is the React starter logo, not a Voxa brand asset."
+    },
+    "Mesa": {
+      "file": null,
+      "status": "unverified",
+      "note": "The deck uses a generic serving-bell pictogram; no dedicated brand asset verified."
+    },
+    "Terminal": {
+      "file": null,
+      "status": "unverified",
+      "note": "The deck uses a generic airport pictogram; no dedicated brand asset verified."
+    }
+  }
+}

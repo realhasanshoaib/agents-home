@@ -1,6 +1,10 @@
 # Shared brand logos
 
-Reusable assets for diagrams and finance dashboards. Filenames are stable vendor keys, not project-specific paths. `sources.json` records where each asset came from, retrieval dates where known, and adaptations. Older cached files have unknown upstream provenance; their local source is recorded honestly.
+Reusable assets for diagrams and finance dashboards, including our own applications. Filenames identify brands independently of example projects. `sources.json` records where each asset came from, retrieval dates where known, and adaptations. Older cached files have unknown upstream provenance; their local source is recorded honestly.
+
+For our own products, consult `own-apps.json` first. It maps application names to the selected files and explicitly records shared branding or missing logos. Source our artwork from its application or maintained brand assets. Keep native PNG/WebP files as such instead of pretending they are vector SVGs. Starter-framework icons and generic deck pictograms are not verified product logos.
+
+The static sequence renderer accepts a bare SVG key (`logo: 'aws'`) or an explicit filename (`logo: 'murmur.png'`, `logo: 'ava.webp'`). `logoBase` selects the containing directory. Use a wordmark where it has room and an app icon at small sizes. `chalk.svg` remains the original diagram reference mark; `chalk-wordmark.webp` is the newer deck wordmark. Track has both an icon and a wordmark.
 
 Prefer Svgl (`https://svgl.app/docs/api`) for new SVGs, then a vendor's official website. Keep SVGs self-contained: no scripts, event handlers, foreign objects or external image/font references. Record the source and any change in `sources.json`. Preview the actual asset against the intended background before using it.
 

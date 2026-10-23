@@ -168,5 +168,124 @@
     "page": "https://www.read.ai",
     "retrieved": "2026-10-23",
     "adaptation": "ViewBox cropped to the existing square logomark; paths unchanged."
+  },
+  "ava": {
+    "file": "ava.webp",
+    "source": "/Users/macmini/code/q9-pitch/public/deck/logo-ava.webp",
+    "retrieved": "2026-10-23",
+    "sha256": "cb6ebeb2e704fbbb998671b0a375ade50249d8b5ebb1091b9b29f01835358a14",
+    "note": "Copied unchanged from own application or existing Q9 deck/brand assets; local checkout evidence, not a live-store verification."
+  },
+  "nura": {
+    "file": "nura.webp",
+    "source": "/Users/macmini/code/q9-pitch/public/deck/logo-nura.webp",
+    "retrieved": "2026-10-23",
+    "sha256": "a1ac27e6c512f5180b3e6f32db7d0bd2455c3b339199995ef00b4b596e9d9fe7",
+    "note": "Copied unchanged from own application or existing Q9 deck/brand assets; local checkout evidence, not a live-store verification."
+  },
+  "flow": {
+    "file": "flow.webp",
+    "source": "/Users/macmini/code/q9-pitch/public/deck/logo-flow.webp",
+    "retrieved": "2026-10-23",
+    "sha256": "2ce7faf7e245ef7e59b22e4562c8d824c812d93ef49ba245749e10fc1d476403",
+    "note": "Copied unchanged from own application or existing Q9 deck/brand assets; local checkout evidence, not a live-store verification."
+  },
+  "edli": {
+    "file": "edli.webp",
+    "source": "/Users/macmini/code/q9-pitch/public/deck/logo-edli.webp",
+    "retrieved": "2026-10-23",
+    "sha256": "b93b605f989a4570d87d4262685ab30a6342ba382317cf98bea25a61d01abce2",
+    "note": "Copied unchanged from own application or existing Q9 deck/brand assets; local checkout evidence, not a live-store verification."
+  },
+  "spend": {
+    "file": "spend.webp",
+    "source": "/Users/macmini/code/q9-pitch/public/deck/logo-spend.webp",
+    "retrieved": "2026-10-23",
+    "sha256": "a34fc21200a14f60287cc841626b6181675c6849ed39e70078458ec9843d7d9c",
+    "note": "Copied unchanged from own application or existing Q9 deck/brand assets; local checkout evidence, not a live-store verification."
+  },
+  "chalk-wordmark": {
+    "file": "chalk-wordmark.webp",
+    "source": "/Users/macmini/code/q9-pitch/public/deck/logo-chalk.webp",
+    "retrieved": "2026-10-23",
+    "sha256": "338499ece73df0f9320773be9dc99d747dc168f5564b6f42f74c163b3f478d98",
+    "note": "Copied unchanged from own application or existing Q9 deck/brand assets; local checkout evidence, not a live-store verification."
+  },
+  "track-wordmark": {
+    "file": "track-wordmark.webp",
+    "source": "/Users/macmini/code/q9-pitch/public/deck/logo-track.webp",
+    "retrieved": "2026-10-23",
+    "sha256": "797f778d059b9b80ea59e22501eaaa2af4ecad16f5b5a165ae8a847d11f37e36",
+    "note": "Copied unchanged from own application or existing Q9 deck/brand assets; local checkout evidence, not a live-store verification."
+  },
+  "track": {
+    "file": "track.svg",
+    "source": "/Users/macmini/code/track/apps/web/public/track-favicon.svg",
+    "retrieved": "2026-10-23",
+    "sha256": "916cb23dc90f62967882e6299453b8178f1aeb6dad62fe148a5abcaf658ee2ef",
+    "note": "Copied unchanged from own application or existing Q9 deck/brand assets; local checkout evidence, not a live-store verification."
+  },
+  "murmur": {
+    "file": "murmur.png",
+    "source": "/Users/macmini/code/murmur/apps/mobile/assets/images/icon.png",
+    "retrieved": "2026-10-23",
+    "sha256": "053dc8b01433ae02493d723024b6e5ce26d71558d6889aee7428caf0f7a6c755",
+    "note": "Copied unchanged from own application or existing Q9 deck/brand assets; local checkout evidence, not a live-store verification."
+  },
+  "super-alarm": {
+    "file": "super-alarm.png",
+    "source": "/Users/macmini/code/super-alarm/assets/icon.png",
+    "retrieved": "2026-10-23",
+    "sha256": "b400df8b8cf9908bf7909b3cc305df0df5443890ab198e74dd358160240b0476",
+    "note": "Copied unchanged from own application or existing Q9 deck/brand assets; local checkout evidence, not a live-store verification."
+  },
+  "diet-bite-life": {
+    "file": "diet-bite-life.png",
+    "source": "/Users/macmini/code/dbl/assets/app-icon.png",
+    "retrieved": "2026-10-23",
+    "sha256": "2b54caeadd7995258729e6ed094ab3892297c40f2c140f35f8d1c2bb7924af0c",
+    "note": "Copied unchanged from own application or existing Q9 deck/brand assets; local checkout evidence, not a live-store verification."
+  },
+  "sip": {
+    "file": "sip.svg",
+    "source": "/Users/macmini/code/sip/store-assets/app-icon.svg",
+    "retrieved": "2026-10-23",
+    "sha256": "3dfe2657365ef76ec754b187bcf02080b7e2799f36782b7a8bec5a4d6da56b8e",
+    "note": "Copied unchanged from own application or existing Q9 deck/brand assets; local checkout evidence, not a live-store verification."
+  },
+  "bolo": {
+    "file": "bolo.png",
+    "source": "/Users/macmini/code/bolo/assets/icon.png",
+    "retrieved": "2026-10-23",
+    "sha256": "7fb221fa1c88991ed167c0f78a65ed459a467163a05d1bb904d8a3560f2132c0",
+    "note": "Copied unchanged from own application or existing Q9 deck/brand assets; local checkout evidence, not a live-store verification."
+  },
+  "kaadr": {
+    "file": "kaadr.png",
+    "source": "/Users/macmini/code/q9labs/leap/video/public/brand/products/kaadr-logo-trimmed.png",
+    "retrieved": "2026-10-23",
+    "sha256": "ad866c9e2ca08e5b77c74580cccc66f07ddc168cef6aa16f13c4da2774227b30",
+    "note": "Copied unchanged from own application or existing Q9 deck/brand assets; local checkout evidence, not a live-store verification."
+  },
+  "saypad": {
+    "file": "saypad.svg",
+    "source": "/Users/macmini/code/utter/site/public/logo.svg",
+    "retrieved": "2026-10-23",
+    "sha256": "1a94e83cc3b61d85f48907738c6ef03d7f96011005ab45a019e2e263bf75d160",
+    "note": "Copied unchanged from own application or existing Q9 deck/brand assets; local checkout evidence, not a live-store verification."
+  },
+  "q9-labs": {
+    "file": "q9-labs.svg",
+    "source": "/Users/macmini/code/q9labs/leap/video/public/brand/q9labs-logo-mark.svg",
+    "retrieved": "2026-10-23",
+    "sha256": "e2e151c56baf5d50c0087600afdc5c86f90ec6c0a6a2c6b8afb60def7917517f",
+    "note": "Copied unchanged from own application or existing Q9 deck/brand assets; local checkout evidence, not a live-store verification."
+  },
+  "q9-chat": {
+    "file": "q9-chat.svg",
+    "source": "/Users/macmini/code/q9chat/apps/web/src/ui/logo-paths.ts",
+    "component": "/Users/macmini/code/q9chat/apps/web/src/ui/brand.tsx",
+    "retrieved": "2026-10-23",
+    "adaptation": "Serialized the existing LogoMark SVG, preserving viewBox, rect, path data and fills; no new artwork."
   }
 }

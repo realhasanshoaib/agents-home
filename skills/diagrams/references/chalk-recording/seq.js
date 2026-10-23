@@ -1,6 +1,6 @@
 // Draws a sequence diagram into <svg id="seq">.
 // lanes: [{ id, title, sub, logo?, icon?: 'server', partial? }]; no logo or icon draws a person
-// logo files load from logoBase + `${logo}.svg`; the default points at the shared cache from a page in references/<name>/
+// logo is a bare key that loads logoBase + `${logo}.svg`, or a file name ending .svg, .png or .webp that loads as written; the default points at the shared cache from a page in references/<name>/
 // steps:
 //   'Phase' or { phase }                                       starts a phase
 //   { from, to, label, kind: 'req' | 'res', code?, partial? }   one message; from === to draws a loop
@@ -91,8 +91,10 @@ function drawSequence({ lanes, steps, width = 1560, logoBase = '../../logos/' })
   for (const lane of lanes) {
     const cx = laneX(lane.id);
     lines += `<line x1="${cx}" y1="${head - 6}" x2="${cx}" y2="${height}" stroke="#d9d5cc" stroke-width="1.5" ${lane.partial ? 'stroke-dasharray="5 5"' : ''}/>`;
-    if (lane.logo) lines += `<image href="${logoBase}${lane.logo}.svg" x="${cx - 14}" y="0" width="28" height="24"/>`;
-    else if (lane.icon === 'server') lines += `<g transform="translate(${cx - 12} 0)" fill="none" stroke="#1b2233" stroke-width="1.8"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><path d="M6 6h1M6 18h1" stroke-linecap="round"/></g>`;
+    if (lane.logo) {
+      const file = /\.(svg|png|webp)$/.test(lane.logo) ? lane.logo : `${lane.logo}.svg`;
+      lines += `<image href="${logoBase}${file}" x="${cx - 14}" y="0" width="28" height="24"/>`;
+    } else if (lane.icon === 'server') lines += `<g transform="translate(${cx - 12} 0)" fill="none" stroke="#1b2233" stroke-width="1.8"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><path d="M6 6h1M6 18h1" stroke-linecap="round"/></g>`;
     else lines += `<g transform="translate(${cx - 12} 0)" fill="none" stroke="#1b2233" stroke-width="1.8"><circle cx="12" cy="7" r="4.5"/><path d="M3 23c1-4.4 4.4-7 9-7s8 2.6 9 7" stroke-linecap="round"/></g>`;
     lines += text(cx, 46, lane.title, `text-anchor="middle" font-size="16" font-weight="650" fill="#1b2233"`);
     if (lane.sub) lines += text(cx, 66, lane.sub, `text-anchor="middle" font-size="13" fill="#80858f"`);
