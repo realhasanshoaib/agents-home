@@ -1,0 +1,6 @@
+interface:
+  display_name: "Q9 Brain"
+  short_description: "Read the newest Sources before asking or reporting, and save corrections in the same turn"
+  default_prompt: "Use $q9-brain to check and update the Q9 Brain on this topic."
+policy:
+  allow_implicit_invocation: true
