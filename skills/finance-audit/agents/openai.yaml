@@ -1,0 +1,6 @@
+interface:
+  display_name: "Finance Audit"
+  short_description: "Audit company spending, find omissions and turn evidence into budget decisions."
+  default_prompt: "Use $finance-audit to review our company spending and deliver an evidence-backed HTML budget dashboard."
+policy:
+  allow_implicit_invocation: true
