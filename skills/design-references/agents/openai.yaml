@@ -1,0 +1,6 @@
+interface:
+  display_name: "Design References"
+  short_description: "Designs Hasan likes for landing pages and walkthrough videos"
+  default_prompt: "Use $design-references as inspiration for this design."
+policy:
+  allow_implicit_invocation: true

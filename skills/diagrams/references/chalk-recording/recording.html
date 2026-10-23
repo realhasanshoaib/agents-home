@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>How a recording gets made and found</title>
+<style>
+* { box-sizing: border-box; }
+:root {
+  --bg: #f7f5f0; --line: #d9d5cc; --ink: #1b2233; --ink-2: #454c5a; --muted: #80858f;
+  --navy: #1f2c55; --teal: #1d8a7c; --partial: #c07f12; --pill: #ebe8e1;
+  --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace;
+}
+body { margin: 0; background: var(--bg); font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: antialiased; }
+.canvas { position: relative; width: 1680px; height: 1000px; margin: 0 auto; }
+.abs { position: absolute; }
+h1 { font-size: 30px; letter-spacing: -0.02em; margin: 0; }
+.lede { color: var(--muted); font-size: 16px; margin: 6px 0 0; }
+.box { position: absolute; border: 1.5px solid var(--line); border-radius: 22px; padding: 22px 26px; }
+.box h2 { margin: 0; font-size: 25px; letter-spacing: -0.015em; display: flex; align-items: center; gap: 12px; }
+.box h2 img { height: 26px; }
+.box .sub { color: var(--muted); font-size: 15px; margin: 4px 0 0; }
+.rule { height: 1px; background: var(--line); margin: 14px 0 0; }
+.item { position: absolute; display: grid; grid-template-columns: 44px auto; column-gap: 12px; align-items: center; }
+.item img, .item .glyph { width: 40px; height: 40px; object-fit: contain; grid-row: span 2; justify-self: center; }
+.item b { font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+.item span { color: var(--muted); font-size: 14px; }
+.item.plain { grid-template-columns: auto; }
+code { font-family: var(--mono); font-size: 13.5px; color: var(--ink-2); }
+.pill { display: inline-block; background: var(--pill); color: var(--ink-2); border-radius: 8px; padding: 4px 10px; font-size: 13px; }
+.state { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; color: var(--partial); font-weight: 600; }
+.state::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.state.live { color: #1f8a5a; }
+.group-title { font-size: 25px; font-weight: 700; letter-spacing: -0.015em; }
+svg.wires { position: absolute; inset: 0; overflow: visible; pointer-events: none; }
+.w { fill: none; stroke-width: 1.6; }
+.w.req { stroke: var(--navy); }
+.w.res { stroke: var(--teal); }
+.lbl { font: 500 14px var(--sans); }
+.lbl.req { fill: var(--navy); }
+.lbl.res { fill: var(--teal); }
+.n circle { fill: var(--bg); stroke-width: 1.6; }
+.n.req circle { stroke: var(--navy); }
+.n.res circle { stroke: var(--teal); }
+.n text { font: 700 12.5px var(--sans); text-anchor: middle; dominant-baseline: central; }
+.n.req text { fill: var(--navy); }
+.n.res text { fill: var(--teal); }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="abs" style="left:60px;top:44px">
+    <h1>How a recording gets made and found</h1>
+    <p class="lede">Chalk, 17 Oct 2026. Follow the numbers.</p>
+  </div>
+
+  <!-- People -->
+  <div class="abs group-title" style="left:60px;top:250px">People</div>
+  <div class="item" style="left:60px;top:318px">
+    <svg class="glyph" viewBox="0 0 40 40" fill="none" stroke="#1b2233" stroke-width="2.2"><circle cx="20" cy="13" r="6.5"/><path d="M7 34c1.6-6.6 6.6-10 13-10s11.4 3.4 13 10" stroke-linecap="round"/></svg>
+    <b>Host and guests</b><span>in the call</span>
+  </div>
+  <div class="item" style="left:60px;top:690px">
+    <svg class="glyph" viewBox="0 0 40 40" fill="none" stroke="#1b2233" stroke-width="2.2"><circle cx="20" cy="13" r="6.5"/><path d="M7 34c1.6-6.6 6.6-10 13-10s11.4 3.4 13 10" stroke-linecap="round"/></svg>
+    <b>Space owner</b><span>days later</span>
+  </div>
+  <div class="abs" style="left:96px;top:770px"><span class="state">Partial</span> <span class="pill" style="margin-left:6px">no history screen</span></div>
+
+  <!-- Cloudflare SFU -->
+  <div class="item" style="left:1110px;top:70px">
+    <img src="../../logos/cloudflare.svg" alt="">
+    <b>Realtime SFU</b><span>Cloudflare · carries the call media</span>
+  </div>
+
+  <!-- Control plane -->
+  <div class="box" style="left:400px;top:210px;width:390px;height:660px">
+    <h2>Chalk backend</h2>
+    <p class="sub">Postgres is the only authority for jobs and state</p>
+    <div class="rule"></div>
+    <div class="abs" style="left:26px;top:112px;display:flex;align-items:center;gap:10px;color:var(--muted);font-size:15px"><img src="../../logos/aws.svg" alt="" style="height:22px"> EC2 · Singapore</div>
+  </div>
+  <div class="item" style="left:440px;top:380px"><img src="../../logos/elixir.svg" alt=""><b>Sync</b><span>live Episode state</span></div>
+  <div class="item" style="left:440px;top:530px"><img src="../../logos/go.svg" alt=""><b>API</b><span>control plane</span></div>
+  <div class="item" style="left:440px;top:740px"><img src="../../logos/planetscale.svg" alt=""><b>PostgreSQL</b><span>PlanetScale</span></div>
+
+  <!-- Recorder fleet -->
+  <div class="box" style="left:880px;top:290px;width:360px;height:420px">
+    <h2><img src="../../logos/digitalocean.svg" alt="">Recorder fleet</h2>
+    <p class="sub">Disposable droplets, short-lived identity</p>
+    <div style="margin-top:10px"><span class="state">Partial</span> <span class="pill" style="margin-left:6px">no droplets running on 16 Oct</span></div>
+  </div>
+  <div class="item plain" style="left:920px;top:450px"><b>Capture worker</b><code>c-2 · encrypts as it records</code></div>
+  <div class="item plain" style="left:920px;top:600px"><b>Render worker</b><code>c-8 · libx264 → MP4</code></div>
+
+  <!-- R2 -->
+  <div class="box" style="left:1330px;top:290px;width:300px;height:420px">
+    <h2><img src="../../logos/cloudflare.svg" alt="">R2</h2>
+    <p class="sub">Private object storage</p>
+  </div>
+  <div class="item plain" style="left:1370px;top:450px"><b>Encrypted bundles</b><span>temporary, deleted after render</span></div>
+  <div class="item plain" style="left:1370px;top:600px"><b>MP4 + audio</b><span>kept for the owner</span></div>
+
+  <!-- KMS -->
+  <div class="item" style="left:910px;top:800px"><img src="../../logos/aws.svg" alt=""><b>KMS</b><span>one data key per recording</span></div>
+
+  <!-- Transcription -->
+  <div class="box" style="left:1330px;top:780px;width:300px;height:180px">
+    <h2 style="font-size:21px"><img src="../../logos/aws.svg" alt="" style="height:22px">Transcription</h2>
+    <p class="sub">Lambda dispatcher</p>
+    <p style="margin:12px 0 0;font-size:16px;font-weight:600">DeepInfra <span style="font-weight:400;color:var(--muted)">· Whisper turbo</span></p>
+  </div>
+
+  <svg class="wires" width="1680" height="1000">
+    <defs>
+      <marker id="hreq" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1.5 9 5 1 8.5z" fill="#1f2c55"/></marker>
+      <marker id="hres" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1.5 9 5 1 8.5z" fill="#1d8a7c"/></marker>
+    </defs>
+
+    <!-- 1 host starts recording -> Sync -->
+    <path class="w req" d="M260 360 H 432" marker-end="url(#hreq)"/>
+    <text class="lbl req" x="300" y="348">start recording</text>
+    <g class="n req" transform="translate(280 360)"><circle r="11"/><text>1</text></g>
+
+    <!-- Sync -> API -->
+    <path class="w req" d="M460 432 V 522" marker-end="url(#hreq)"/>
+    <text class="lbl req" x="476" y="482">recording command</text>
+
+    <!-- API <-> Postgres -->
+    <path class="w req" d="M460 582 V 732" marker-end="url(#hreq)" marker-start="url(#hreq)"/>
+    <text class="lbl req" x="476" y="662">jobs, leases, state</text>
+
+    <!-- 2 API -> capture -->
+    <path class="w req" d="M640 552 H 760 V 470 H 912" marker-end="url(#hreq)"/>
+    <text class="lbl req" x="780" y="458">capture job</text>
+    <g class="n req" transform="translate(700 552)"><circle r="11"/><text>2</text></g>
+
+    <!-- 3 SFU media -> capture (down) -->
+    <path class="w res" d="M1132 132 V 284" marker-end="url(#hres)"/>
+    <text class="lbl res" x="1148" y="214">call media</text>
+    <g class="n res" transform="translate(1132 210)"><circle r="11"/><text>3</text></g>
+
+    <!-- 4 capture -> bundles -->
+    <path class="w res" d="M1180 470 H 1362" marker-end="url(#hres)"/>
+    <text class="lbl res" x="1190" y="452">bundles</text>
+    <g class="n res" transform="translate(1290 470)"><circle r="11"/><text>4</text></g>
+
+    <!-- 5 bundles -> render -->
+    <path class="w req" d="M1420 500 V 540 H 1100 V 592" marker-end="url(#hreq)"/>
+    <text class="lbl req" x="1120" y="530">render reads</text>
+    <g class="n req" transform="translate(1290 540)"><circle r="11"/><text>5</text></g>
+
+    <!-- 6 render -> MP4 -->
+    <path class="w res" d="M1170 622 H 1362" marker-end="url(#hres)"/>
+    <text class="lbl res" x="1200" y="610">MP4</text>
+    <g class="n res" transform="translate(1290 622)"><circle r="11"/><text>6</text></g>
+
+    <!-- KMS -> fleet -->
+    <path class="w req" d="M1000 790 V 714" marker-end="url(#hreq)"/>
+    <text class="lbl req" x="1014" y="760">data keys</text>
+
+    <!-- 7 MP4 -> transcription -->
+    <path class="w req" d="M1480 650 V 772" marker-end="url(#hreq)"/>
+    <text class="lbl req" x="1494" y="740">audio</text>
+    <g class="n req" transform="translate(1480 690)"><circle r="11"/><text>7</text></g>
+
+    <!-- 8 transcript -> API -->
+    <path class="w res" d="M1322 900 H 700 V 590 H 646" marker-end="url(#hres)"/>
+    <text class="lbl res" x="860" y="890">transcript</text>
+    <g class="n res" transform="translate(1250 900)"><circle r="11"/><text>8</text></g>
+
+    <!-- 9 owner -> API -->
+    <path class="w req" d="M250 702 H 340 V 560 H 432" marker-end="url(#hreq)"/>
+    <text class="lbl req" x="256" y="692">list, play</text>
+    <g class="n req" transform="translate(340 630)"><circle r="11"/><text>9</text></g>
+
+    <!-- signed URL back -->
+    <path class="w res" d="M432 586 H 372 V 726 H 254" marker-end="url(#hres)"/>
+    <text class="lbl res" x="262" y="746">download link</text>
+  </svg>
+</div>
+</body>
+</html>

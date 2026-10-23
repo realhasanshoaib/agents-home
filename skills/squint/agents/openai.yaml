@@ -1,0 +1,6 @@
+interface:
+  display_name: "squint"
+  short_description: "Build and review product UI that earns every element, and try to break it before you ship"
+  default_prompt: "Use $squint to review this screen and fix what it finds."
+policy:
+  allow_implicit_invocation: true

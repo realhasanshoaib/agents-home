@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Recording flow, step by step</title>
+<style>
+* { box-sizing: border-box; }
+:root { --bg: #f7f5f0; --line: #d9d5cc; --ink: #1b2233; --muted: #80858f; --navy: #1f2c55; --teal: #1d8a7c; --partial: #c07f12; --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif; }
+body { margin: 0; background: var(--bg); font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: antialiased; }
+.canvas { position: relative; width: 1680px; margin: 0 auto; padding: 44px 60px 60px; }
+h1 { font-size: 30px; letter-spacing: -0.02em; margin: 0; }
+.lede { color: var(--muted); font-size: 16px; margin: 6px 0 28px; }
+svg text { font-family: var(--sans); }
+#seq { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <h1>Recording flow, step by step</h1>
+  <p class="lede">Time runs down the page. Amber marks what is only partly there today.</p>
+  <svg id="seq"></svg>
+</div>
+<script src="seq.js"></script>
+<script>
+const lanes = [
+  { id: 'people', title: 'Host and guests', sub: 'in the call' },
+  { id: 'sfu', title: 'Realtime SFU', sub: 'Cloudflare', logo: 'cloudflare' },
+  { id: 'api', title: 'API + Sync', sub: 'EC2 · Postgres', logo: 'go' },
+  { id: 'capture', title: 'Capture worker', sub: 'DigitalOcean', logo: 'digitalocean', partial: 'no droplets running on 16 Oct' },
+  { id: 'r2', title: 'R2', sub: 'private storage', logo: 'cloudflare' },
+  { id: 'render', title: 'Render worker', sub: 'DigitalOcean', logo: 'digitalocean' },
+  { id: 'asr', title: 'Transcription', sub: 'Lambda · DeepInfra', logo: 'aws' },
+  { id: 'owner', title: 'Space owner', sub: 'days later', partial: 'no history screen' },
+];
+const steps = [
+  'During the call',
+  { from: 'people', to: 'api', label: 'start recording', kind: 'req' },
+  { from: 'api', to: 'capture', label: 'capture job, data key', kind: 'req' },
+  { from: 'sfu', to: 'capture', label: 'call media', kind: 'res' },
+  { from: 'capture', to: 'r2', label: 'encrypted bundles', kind: 'res' },
+  'After the call',
+  { from: 'api', to: 'render', label: 'render job', kind: 'req' },
+  { from: 'r2', to: 'render', label: 'bundles', kind: 'res' },
+  { from: 'render', to: 'r2', label: 'MP4 + audio', kind: 'res' },
+  { from: 'api', to: 'asr', label: 'transcription job', kind: 'req' },
+  { from: 'asr', to: 'api', label: 'transcript', kind: 'res' },
+  'Days later',
+  { from: 'owner', to: 'api', label: 'list recordings', kind: 'req', partial: true },
+  { from: 'api', to: 'owner', label: 'signed download link', kind: 'res' },
+  { from: 'owner', to: 'r2', label: 'download MP4', kind: 'req', partial: true },
+];
+
+drawSequence({ lanes, steps });
+</script>
+</body>
+</html>

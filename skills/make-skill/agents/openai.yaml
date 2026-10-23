@@ -1,0 +1,6 @@
+interface:
+  display_name: "Make Skill"
+  short_description: "Create or edit a personal skill shared by Claude and Codex"
+  default_prompt: "Use $make-skill to create a skill that <does what>."
+policy:
+  allow_implicit_invocation: true

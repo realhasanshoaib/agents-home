@@ -1,0 +1,6 @@
+interface:
+  display_name: "Diagrams"
+  short_description: "Plan diagrams; Haiku 5.5 high renders the brief"
+  default_prompt: "Use $diagrams to explain this system or flow visually."
+policy:
+  allow_implicit_invocation: true
