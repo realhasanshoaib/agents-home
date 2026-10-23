@@ -11,7 +11,9 @@ box run -- 'pnpm install --frozen-lockfile && pnpm gate:full'
 
 It starts a fresh machine from the `q9-base` snapshot, fetches your pushed HEAD from GitHub, runs the command, prints its output, deletes the machine, and exits with the command's exit code. So commit and push first, because uncommitted work doesn't reach the machine. Expect about 2.5 minutes to start the machine before the command runs. A run that finds all 5 machines in use waits for a free one, so parallel lanes can all call it.
 
-Use `--keep` to leave the machine running for a look afterwards (`instabox ssh <name>`), then delete it with `instabox rm <name>`, since kept and paused machines still use one of the 5 slots. `box ls` lists the machines `box` started.
+The checkout is 200 commits deep and also holds origin's default branch as `origin/<name>`. The command can't reach GitHub itself, so a `git fetch` inside it fails. Name every other branch the command needs with `--fetch <branch>`, which repeats.
+
+Leave out `--keep` unless you'll open the machine yourself (`instabox ssh <name>`) right after, then delete it with `instabox rm <name>`. A kept machine holds one of the 5 slots and makes every other lane wait. `box ls` lists the machines `box` started.
 
 **What a machine is.** x86 Linux with 4 vCPU, 8 GB of memory and 20 GB of disk. That's the only size on the free plan. Chalk's full gate peaks at 6.3 GB of memory and 9 GB of disk with its single-worker settings, so keep worker counts as the repo sets them. There's no macOS, Xcode or simulator, so that work goes to the M4. The machine pauses after 30 minutes idle and can't be told otherwise.
 

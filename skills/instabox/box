@@ -3,15 +3,18 @@
 # in a checkout of the current repository's HEAD fetched from GitHub, then
 # deletes the machine.
 #
-#   box run [--keep] -- '<command>'   e.g. box run -- 'pnpm install --frozen-lockfile && pnpm gate:full'
+#   box run [--keep] [--fetch <branch>]... -- '<command>'
+#                                     e.g. box run -- 'pnpm install --frozen-lockfile && pnpm gate:full'
 #   box ls                            machines that box started
 #
-# HEAD must be pushed. Exits with the command's exit code. The account allows
-# 5 machines, so a run waits for a free one.
+# HEAD must be pushed. The checkout also has origin's default branch and every
+# --fetch branch as origin/<name>, 200 commits deep. The command itself can't
+# fetch, because the GitHub token is gone by the time it runs. Exits with the
+# command's exit code. The account allows 5 machines, so a run waits for a free one.
 set -u
 snapshot=${BOX_SNAPSHOT:-q9-base}
 
-usage() { sed -n '2,11p' "$0" >&2; exit 64; }
+usage() { sed -n '2,12p' "$0" >&2; exit 64; }
 
 case "${1:-}" in
   ls) exec instabox ls --meta box=1 ;;
@@ -19,9 +22,11 @@ case "${1:-}" in
   *) usage ;;
 esac
 keep=0
+branches=()
 while (($#)); do
   case "$1" in
     --keep) keep=1; shift ;;
+    --fetch) branches+=("${2:?--fetch needs a branch}"); shift 2 ;;
     --) shift; break ;;
     *) usage ;;
   esac
@@ -37,6 +42,9 @@ if [[ $origin =~ ^git@github\.com:(.+)$ ]]; then origin="https://github.com/${BA
 if [[ -n $(git -C "$repo" status --porcelain --untracked-files=no) ]]; then
   echo "box: uncommitted changes don't reach the machine. It runs $sha as pushed." >&2
 fi
+default=$(git -C "$repo" symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null) && branches+=("${default#origin/}")
+refspecs=""
+for b in ${branches[@]+"${branches[@]}"}; do refspecs+=" $(printf %q "+refs/heads/$b:refs/remotes/origin/$b")"; done
 token=${BOX_GITHUB_TOKEN:-$(gh auth token)} || exit 1
 
 slug=$(basename "$repo" | tr 'A-Z' 'a-z' | tr -c 'a-z0-9\n' '-' | cut -c1-20)
@@ -60,9 +68,9 @@ echo "box: $name is up after $(( $(date +%s) - start ))s, running $sha" >&2
   printf '%s\n' "$token"
   cat <<EOF
 mkdir -p ~/work && cd ~/work && git init -q && git remote add origin $(printf %q "$origin")
-git -c http.extraHeader="Authorization: Basic \$(printf 'x-access-token:%s' "\$T" | base64 -w0)" fetch -q --depth 50 origin $sha || { unset T; echo "box: $sha is not on origin. Push it first." >&2; exit 97; }
+git -c http.extraHeader="Authorization: Basic \$(printf 'x-access-token:%s' "\$T" | base64 -w0)" fetch -q --depth 200 origin $sha$refspecs || { unset T; echo "box: fetching $sha$refspecs from origin failed. Push HEAD first, and check the --fetch names." >&2; exit 97; }
 unset T
-git checkout -q FETCH_HEAD
+git checkout -q $sha
 bash -lc $(printf %q "$command") </dev/null
 EOF
 } | instabox ssh "$name" -- bash -l -s
