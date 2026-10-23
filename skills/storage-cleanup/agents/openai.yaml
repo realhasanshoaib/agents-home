@@ -1,0 +1,6 @@
+interface:
+  display_name: "Storage Cleanup"
+  short_description: "Free disk space on the Air and the M4: push and remove idle worktrees, clear caches, ask about the rest"
+  default_prompt: "Use $storage-cleanup to free disk space on both Macs."
+policy:
+  allow_implicit_invocation: false
