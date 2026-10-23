@@ -1,0 +1,72 @@
+#!/bin/bash
+# Runs a command on a fresh Instabox machine started from the q9-base snapshot,
+# in a checkout of the current repository's HEAD fetched from GitHub, then
+# deletes the machine.
+#
+#   box run [--keep] -- '<command>'   e.g. box run -- 'pnpm install --frozen-lockfile && pnpm gate:full'
+#   box ls                            machines that box started
+#
+# HEAD must be pushed. Exits with the command's exit code. The account allows
+# 5 machines, so a run waits for a free one.
+set -u
+snapshot=${BOX_SNAPSHOT:-q9-base}
+
+usage() { sed -n '2,11p' "$0" >&2; exit 64; }
+
+case "${1:-}" in
+  ls) exec instabox ls --meta box=1 ;;
+  run) shift ;;
+  *) usage ;;
+esac
+keep=0
+while (($#)); do
+  case "$1" in
+    --keep) keep=1; shift ;;
+    --) shift; break ;;
+    *) usage ;;
+  esac
+done
+(($#)) || usage
+command="$*"
+
+repo=$(git rev-parse --show-toplevel) || exit 1
+sha=$(git -C "$repo" rev-parse HEAD) || exit 1
+origin=$(git -C "$repo" remote get-url origin) || exit 1
+if [[ $origin =~ ^git@github\.com:(.+)$ ]]; then origin="https://github.com/${BASH_REMATCH[1]}"; fi
+[[ $origin == https://github.com/* ]] || { echo "box: origin is not a GitHub URL: $origin" >&2; exit 1; }
+if [[ -n $(git -C "$repo" status --porcelain --untracked-files=no) ]]; then
+  echo "box: uncommitted changes don't reach the machine. It runs $sha as pushed." >&2
+fi
+token=${BOX_GITHUB_TOKEN:-$(gh auth token)} || exit 1
+
+slug=$(basename "$repo" | tr 'A-Z' 'a-z' | tr -c 'a-z0-9\n' '-' | cut -c1-20)
+name="box-$slug-$(date +%H%M%S)-$$"
+start=$(date +%s)
+waiting=0
+until error=$(instabox create --name "$name" --snapshot "$snapshot" --no-vault --secrets none --meta box=1 2>&1 >/dev/null); do
+  read -r count limit < <(instabox usage --json | python3 -I -c 'import json, sys; d = json.load(sys.stdin); print(d["machines"], d["limits"]["maxMachines"])')
+  ((count >= limit)) || { echo "box: could not create $name: $error" >&2; exit 1; }
+  ((waiting)) || echo "box: all $limit machines are in use, waiting for one..." >&2
+  waiting=1
+  sleep 30
+done
+((keep)) || trap 'instabox rm "$name" >/dev/null 2>&1 || echo "box: could not delete $name, remove it with: instabox rm $name" >&2' EXIT
+echo "box: $name is up after $(( $(date +%s) - start ))s, running $sha" >&2
+
+# The token arrives on stdin, is used for one fetch, and is never stored on the
+# machine or visible to the command, which runs after it is unset.
+{
+  echo 'read -r T'
+  printf '%s\n' "$token"
+  cat <<EOF
+mkdir -p ~/work && cd ~/work && git init -q && git remote add origin $(printf %q "$origin")
+git -c http.extraHeader="Authorization: Basic \$(printf 'x-access-token:%s' "\$T" | base64 -w0)" fetch -q --depth 50 origin $sha || { unset T; echo "box: $sha is not on origin. Push it first." >&2; exit 97; }
+unset T
+git checkout -q FETCH_HEAD
+bash -lc $(printf %q "$command") </dev/null
+EOF
+} | instabox ssh "$name" -- bash -l -s
+status=$?
+echo "box: exit $status after $(( $(date +%s) - start ))s" >&2
+((keep)) && echo "box: kept $name. Reach it with: instabox ssh $name" >&2
+exit $status

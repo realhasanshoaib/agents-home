@@ -1,0 +1,6 @@
+interface:
+  display_name: "Instabox"
+  short_description: "Run gates, tests and builds on a fresh Instabox Linux machine with box run"
+  default_prompt: "Use $instabox to run this repo's gate on Instabox."
+policy:
+  allow_implicit_invocation: true
