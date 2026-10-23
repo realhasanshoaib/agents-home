@@ -262,10 +262,15 @@
   },
   "kaadr": {
     "file": "kaadr.png",
-    "source": "/Users/macmini/code/q9labs/leap/video/public/brand/products/kaadr-logo-trimmed.png",
+    "source": "/Users/macmini/code/kaadr/apps/web/public/logo.png",
+    "verified_against": [
+      "/Users/macmini/code/kaadr-marketing/public/logo.png",
+      "/Users/macmini/code/kaadr-mobile-apps/apps/web/public/logo.png"
+    ],
+    "component": "/Users/macmini/code/kaadr/apps/web/src/components/kaadr-logo.tsx",
     "retrieved": "2026-10-23",
-    "sha256": "ad866c9e2ca08e5b77c74580cccc66f07ddc168cef6aa16f13c4da2774227b30",
-    "note": "Copied unchanged from own application or existing Q9 deck/brand assets; local checkout evidence, not a live-store verification."
+    "sha256": "a0421ab6588a3cedf9313784eb5484fef2e174e5d0bfcda510ede9a28523cead",
+    "note": "Current app/marketing hand-shaped Kaadr wordmark. Native white artwork on transparency; app displays it using a currentColor CSS mask. Supersedes the old thin-letter talent-marketplace deck logo rejected by Hasan."
   },
   "saypad": {
     "file": "saypad.svg",

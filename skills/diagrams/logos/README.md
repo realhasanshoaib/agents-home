@@ -13,5 +13,6 @@ Prefer Svgl (`https://svgl.app/docs/api`) for new SVGs, then a vendor's official
 - Use `outlook.svg` for Hotmail, `apple.svg` for Apple Developer, and `openai.svg` for ChatGPT.
 - Cloudflare WARP+ uses `cloudflare.svg`; the Warp terminal is a different product.
 - Account qualifiers do not change the vendor: both Ultravox accounts use `ultravox.svg`, for example.
+- `kaadr.png` is the current hand-shaped Kaadr wordmark, white on transparency. Use a dark surface or the application's `currentColor` CSS-mask treatment. The older thin-letter talent-marketplace deck logo is superseded.
 
 These are reference assets, not an executable tool. Reading this folder does not perform downloads or other network calls. Keep visible vendor labels alongside icons and embed the selected assets in portable HTML output. Trademark ownership stays with the respective vendors; this cache does not grant additional usage rights.

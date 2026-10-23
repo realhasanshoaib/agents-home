@@ -56,7 +56,8 @@
     },
     "Kaadr": {
       "file": "kaadr.png",
-      "status": "available"
+      "status": "available",
+      "note": "Current hand-shaped Kaadr wordmark. White on transparency: use a dark surface or the app\u2019s currentColor CSS-mask treatment. Old deck logo was rejected by Hasan on 23 October 2026."
     },
     "Q9 Chat": {
       "file": "q9-chat.svg",
