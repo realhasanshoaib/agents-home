@@ -1,0 +1,172 @@
+{
+  "1password": {
+    "source": "/Users/macmini/.agents/skills/design-references/logos/1password.svg",
+    "note": "Reused existing design-reference asset; upstream provenance not recorded"
+  },
+  "anthropic": {
+    "source": "/Users/macmini/.agents/skills/design-references/logos/anthropic.svg",
+    "note": "Reused existing design-reference asset; upstream provenance not recorded"
+  },
+  "apple": {
+    "url": "https://svgl.app/library/apple.svg",
+    "page": "https://svgl.app/docs/api",
+    "retrieved": "2026-10-23"
+  },
+  "aws": {
+    "source": "Existing diagram reference cache; upstream provenance not recorded"
+  },
+  "azure": {
+    "source": "/Users/macmini/.agents/skills/design-references/logos/azure.svg",
+    "note": "Reused existing design-reference asset; upstream provenance not recorded"
+  },
+  "cartesia": {
+    "url": "https://cartesia.ai/favicon.svg",
+    "page": "https://cartesia.ai",
+    "retrieved": "2026-10-23"
+  },
+  "chalk": {
+    "source": "Existing diagram reference cache; upstream provenance not recorded"
+  },
+  "cloudflare": {
+    "source": "Existing diagram reference cache; upstream provenance not recorded"
+  },
+  "commandcode": {
+    "url": "https://commandcode.ai/favicon/2024/safari-pinned-tab.svg",
+    "page": "https://commandcode.ai",
+    "retrieved": "2026-10-23"
+  },
+  "convex": {
+    "source": "/Users/macmini/.agents/skills/design-references/logos/convex.svg",
+    "note": "Reused existing design-reference asset; upstream provenance not recorded"
+  },
+  "digitalocean": {
+    "source": "Existing diagram reference cache; upstream provenance not recorded"
+  },
+  "elevenlabs": {
+    "source": "/Users/macmini/.agents/skills/design-references/logos/elevenlabs.svg",
+    "note": "Reused existing design-reference asset; upstream provenance not recorded"
+  },
+  "elixir": {
+    "source": "Existing diagram reference cache; upstream provenance not recorded"
+  },
+  "expo": {
+    "source": "Existing diagram reference cache; upstream provenance not recorded"
+  },
+  "flyio": {
+    "source": "/Users/macmini/.agents/skills/design-references/logos/flyio.svg",
+    "note": "Reused existing design-reference asset; upstream provenance not recorded"
+  },
+  "github": {
+    "source": "/Users/macmini/.agents/skills/design-references/logos/github.svg",
+    "note": "Reused existing design-reference asset; upstream provenance not recorded"
+  },
+  "go": {
+    "source": "Existing diagram reference cache; upstream provenance not recorded"
+  },
+  "godaddy": {
+    "source": "/Users/macmini/.agents/skills/design-references/logos/godaddy.svg",
+    "note": "Reused existing design-reference asset; upstream provenance not recorded"
+  },
+  "google": {
+    "source": "Existing diagram reference cache; upstream provenance not recorded"
+  },
+  "hostinger": {
+    "source": "/Users/macmini/.agents/skills/design-references/logos/hostinger.svg",
+    "note": "Reused existing design-reference asset; upstream provenance not recorded"
+  },
+  "macroscope": {
+    "url": "https://www.macroscope.com/assets/favicon.svg",
+    "page": "https://www.macroscope.com",
+    "retrieved": "2026-10-23"
+  },
+  "microsoft": {
+    "url": "https://svgl.app/library/microsoft.svg",
+    "page": "https://svgl.app/docs/api",
+    "retrieved": "2026-10-23"
+  },
+  "mongodb": {
+    "source": "/Users/macmini/.agents/skills/design-references/logos/mongodb.svg",
+    "note": "Reused existing design-reference asset; upstream provenance not recorded"
+  },
+  "openai": {
+    "source": "/Users/macmini/.agents/skills/design-references/logos/openai.svg",
+    "note": "Reused existing design-reference asset; upstream provenance not recorded"
+  },
+  "opencode": {
+    "url": "https://svgl.app/library/opencode.svg",
+    "page": "https://svgl.app/docs/api",
+    "retrieved": "2026-10-23"
+  },
+  "openrouter": {
+    "source": "/Users/macmini/.agents/skills/design-references/logos/openrouter.svg",
+    "note": "Reused existing design-reference asset; upstream provenance not recorded"
+  },
+  "outlook": {
+    "url": "https://svgl.app/library/microsoft-outlook.svg",
+    "page": "https://svgl.app/docs/api",
+    "retrieved": "2026-10-23"
+  },
+  "planetscale": {
+    "source": "Existing diagram reference cache; upstream provenance not recorded"
+  },
+  "postgresql": {
+    "source": "Existing diagram reference cache; upstream provenance not recorded"
+  },
+  "react": {
+    "source": "Existing diagram reference cache; upstream provenance not recorded"
+  },
+  "readai": {
+    "url": "https://readai-assets-production.s3.us-east-1.amazonaws.com/readai_images/ReadAILogo_HorizontalLockup_Color_BlackText.svg",
+    "page": "https://www.read.ai",
+    "retrieved": "2026-10-23"
+  },
+  "resend": {
+    "source": "Existing diagram reference cache; upstream provenance not recorded"
+  },
+  "telnyx": {
+    "url": "https://telnyx.com/images/homepage-september-2026/models/telnyx.svg",
+    "page": "https://telnyx.com",
+    "retrieved": "2026-10-23",
+    "adaptation": "Monochrome fill changed to dark navy for light backgrounds."
+  },
+  "twilio": {
+    "url": "https://svgl.app/library/twilio.svg",
+    "page": "https://svgl.app/docs/api",
+    "retrieved": "2026-10-23"
+  },
+  "typescript": {
+    "source": "Existing diagram reference cache; upstream provenance not recorded"
+  },
+  "ultravox": {
+    "url": "https://framerusercontent.com/images/hzAEdihxJ11mv3l4trNh2WprE.svg",
+    "page": "https://www.ultravox.ai",
+    "retrieved": "2026-10-23"
+  },
+  "upstash": {
+    "url": "https://svgl.app/library/upstash.svg",
+    "page": "https://svgl.app/docs/api",
+    "retrieved": "2026-10-23"
+  },
+  "vercel": {
+    "source": "/Users/macmini/.agents/skills/design-references/logos/vercel.svg",
+    "note": "Reused existing design-reference asset; upstream provenance not recorded"
+  },
+  "whatsapp": {
+    "source": "/Users/macmini/.agents/skills/design-references/logos/whatsapp.svg",
+    "note": "Reused existing design-reference asset; upstream provenance not recorded"
+  },
+  "x": {
+    "source": "/Users/macmini/.agents/skills/design-references/logos/x.svg",
+    "note": "Reused existing design-reference asset; upstream provenance not recorded"
+  },
+  "zoho": {
+    "source": "/Users/macmini/.agents/skills/design-references/logos/zoho.svg",
+    "note": "Reused existing design-reference asset; upstream provenance not recorded"
+  },
+  "readai-mark": {
+    "url": "https://readai-assets-production.s3.us-east-1.amazonaws.com/readai_images/ReadAILogo_HorizontalLockup_Color_BlackText.svg",
+    "page": "https://www.read.ai",
+    "retrieved": "2026-10-23",
+    "adaptation": "ViewBox cropped to the existing square logomark; paths unchanged."
+  }
+}

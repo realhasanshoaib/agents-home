@@ -9,7 +9,7 @@ disable-model-invocation: false
 
 The diagram references and tooling moved here from `design-references`. Read `references/README.md` and look at the matching images before starting. It describes the style, architecture and sequence examples, and the static sequence renderer. Use them as inspiration and reusable tooling; the Chalk facts in the examples are not current system evidence.
 
-Use `$squint` when building and reviewing the diagram. `logos/` is the shared diagram brand-asset cache, independent of any example project. Reuse its SVGs before fetching others; add reusable new brand SVGs there. The separate `../design-references/logos/` cache can supply other existing assets.
+Use `$squint` when building and reviewing the diagram. `logos/` is the shared brand-asset cache for diagrams and finance dashboards, independent of any example project. Read `logos/README.md` for selection and provenance. Reuse its SVGs before fetching others; add reusable new brand SVGs there. The separate `../design-references/logos/` cache can supply other existing assets.
 
 ## Main model decides; Haiku builds
 
