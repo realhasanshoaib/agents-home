@@ -47,9 +47,9 @@ Check: each recommendation can be decided or executed without reconstructing the
 
 ## Show the result
 
-Create a self-contained, private HTML dashboard and a short text handoff. Use the existing approved dashboard as the visual reference when available, and the `squint` skill for layout and copy. Keep finance visible only to the founders; no public hosting or external analytics/assets.
+Create a self-contained, private HTML dashboard and a short text handoff. Hasan prefers the original 23 October Claude dashboard: warm cream background, large centered navy headline, rounded white cards, teal/amber accents, a spending bar and visible category/vendor groups. Use that approved design with the latest reconciled data; preserve it when correcting numbers. The private context identifies the current template. Use `squint` for accessibility and copy while honoring this explicit design preference. Keep finance visible only to the founders; no public hosting or external analytics/assets.
 
-Hasan is not a finance specialist. The first screen answers in plain words: what we spend each month, what is already saved, and what room that creates for the next tool. Show a range or incomplete subtotal when the evidence cannot support a company total. Put at most three urgent decisions next. Keep accounting terminology, long inventories and evidence in expandable details. The complete page also shows:
+Hasan is not a finance specialist. The first screen answers in plain words: what we spend each month, what is already saved, and what room that creates for the next tool. Show a range or incomplete subtotal when the evidence cannot support a company total. Keep the spending groups visible and show at most three urgent decisions. Put accounting terminology and source evidence in expandable details. For a newly found cost, distinguish the amount omitted from the previous report, actual usage to date, and any projected increase from an earlier period. The complete page also shows:
 
 - Current recurring cost and cash due, with currency, period and coverage beside the numbers.
 - Spend by venture and vendor/category, with drill-down to evidence and unknown allocations.

@@ -23,6 +23,7 @@ MACHINES = ["agents-macmini"]
 # synced child by child, so a child that only another machine has is removed there.
 SHARED = [
     ".agents/skills/",
+    ".agents/docs/delegation.md",
     ".codex/skills/pr",
     ".codex/AGENTS.md",
     ".codex/approvals.md",
