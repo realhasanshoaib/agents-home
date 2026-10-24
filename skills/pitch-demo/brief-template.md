@@ -1,6 +1,6 @@
 # Brief: <prospect>
 
-The lead fills in every field, citing `research.md` for each fact. Write "unknown" rather than guess; an unknown becomes a question for the meeting, not a claim. Builders use these words as written.
+The lead fills in every field, citing `research.md` for each fact. Write "unknown" rather than guess; an unknown becomes a question in the meeting notes, never a claim or a line on a slide. Builders use these words as written.
 
 ## The buyer
 
@@ -27,6 +27,7 @@ The single moment in the demo that answers their decision, described as the visi
 
 - **Route:** Ava, Flow, or a custom workflow.
 - **Hostname and Worker name:**
+- **Access key:** none, or the Worker secret that gates the demo. With a key, the link we send is `https://<host>/proposal/?k=<key>`.
 - **For a custom workflow:** the one journey end to end, the data it starts from, each state change, and where simulation begins.
 - **When a call or vendor fails:** what the visitor sees instead (the video if one was asked for, otherwise a captured result).
 
@@ -50,7 +51,7 @@ Setup fee (paid in full on signing), monthly fee, what the monthly fee includes,
 
 ## The deck's words
 
-Slide by slide, in order, only the sections this buyer needs (see `deck.md`): the headline, the supporting lines, and what the visual shows.
+Slide by slide, in order, only the sections this buyer needs (see `deck.md`): the headline, the supporting lines, and the real picture it shows: a map, a logo, a photo, or the live product.
 
 ## The video plan (only when a video was asked for)
 

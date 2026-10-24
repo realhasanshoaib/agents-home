@@ -86,6 +86,7 @@ let fetched = false;
 let indexed = false;
 let counted = false;
 let captured = false;
+let linked = false;
 // A bounded process lifetime also cleans up if the invoking SSH session disappears.
 const deadline = setTimeout(() => process.emit('SIGTERM'), 10 * 60 * 1000);
 async function cleanup() {
@@ -122,6 +123,28 @@ try {
   counted = true;
   check('slide count', count > 0 && count <= limit, `${count} .slide sections; maximum ${limit}`);
   if (!count) throw new Error('No .slide sections; refusing incomplete text scan/screenshots');
+  // A demo behind an access key must open from the deck's own buttons, so the prospect never meets a key prompt.
+  await page.waitForLoadState('load');
+  const deckPath = new URL(page.url()).pathname.replace(/\/$/, '');
+  const demoLinks = [...new Set(await page.locator('a[href]').evaluateAll(anchors => anchors.map(a => a.href)))]
+    .map(href => new URL(href))
+    .filter(url => url.origin === deck.origin && url.pathname.replace(/\/$/, '') !== deckPath &&
+      !/\.(pdf|png|jpe?g|webp|gif|svg|mp4|webm|mov)$/i.test(url.pathname));
+  const refused = [];
+  for (const url of demoLinks) {
+    const tab = await context.newPage();
+    let denied = false;
+    tab.on('response', r => { if ([401, 403].includes(r.status()) && new URL(r.url()).origin === deck.origin) denied = true; });
+    const opened = await tab.goto(url.href, { waitUntil: 'load', timeout: 30000 }).catch(() => null);
+    await tab.waitForTimeout(2000);
+    const text = await tab.locator('body').innerText().catch(() => '');
+    const prompted = /\baccess (link|key|code)\b|\benter (the|your) (key|code)\b/i.test(text);
+    if (!opened?.ok() || denied || prompted) refused.push(url.pathname);
+    await tab.close();
+  }
+  linked = true;
+  check('demo links', refused.length === 0, refused.length ? `access refused, key prompt or load failed: ${refused.join(', ')}`
+    : `${demoLinks.length} same-site links from the deck open without an access error`);
   await mkdir(out, { recursive: true });
   temp = await mkdtemp(join(out, '.precheck-'));
   for (const [label, width, height] of [['desktop', 1440, 900], ['phone', 390, 844]]) {
@@ -201,6 +224,7 @@ try {
   if (!fetched) check('deck HTTP', false, 'not verified');
   if (!indexed) check('deck noindex', false, 'not verified');
   if (!counted) check('slide count', false, 'not verified');
+  if (!linked) check('demo links', false, 'not verified');
   if (!captured) check('slide screenshots', false, 'incomplete');
   check('contact sheets', false, redact(error.message).replace(/\s+/g, ' '));
 } finally {
