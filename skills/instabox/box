@@ -114,7 +114,7 @@ if [[ $mode == runner ]]; then
 mkdir -p ~/runner && cd ~/runner
 curl -fsSL https://github.com/actions/runner/releases/download/v$version/actions-runner-linux-x64-$version.tar.gz | tar xz
 sudo ./bin/installdependencies.sh >/dev/null
-./config.sh --unattended --url $(printf %q "$origin") --token "\$T" --name $name --labels instabox >/dev/null || exit 1
+./config.sh --unattended --url $(printf %q "https://github.com/$slug") --token "\$T" --name $name --labels instabox >/dev/null || exit 1
 unset T
 exec ./run.sh
 EOF
