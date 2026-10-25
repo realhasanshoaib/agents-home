@@ -23,7 +23,7 @@ The lead launches a judge only when CI is green on the head SHA and the builder 
 
 ## Rounds
 
-Risk sets the rounds, as the review budget in `AGENTS.md` and `CLAUDE.md` says. A re-review checks only the fix diff and the earlier findings, and it does not redo what an earlier round cleared. The judge confirms CI is green on the exact head before it writes SHIP.
+Risk sets the rounds. A high-risk change (data loss, security or credentials, auth, money, the recorder and other production-critical paths, anything that deploys) gets a fresh judge before merge, then re-reviews of only the fix diff and the earlier findings until the judge says SHIP. Every other change merges when CI is green on the head SHA, and the daily deep pass (`daily-deep-pass.md`) reads it afterwards. A re-review does not redo what an earlier round cleared. The judge confirms CI is green on the exact head before it writes SHIP.
 
 ## The brief
 
