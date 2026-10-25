@@ -5,33 +5,41 @@
 #
 #   box run [--keep] [--fetch <branch>]... -- '<command>'
 #                                     e.g. box run -- 'pnpm install --frozen-lockfile && pnpm gate:full'
+#   box runner [--idle <minutes>]     a self-hosted GitHub Actions runner, label instabox
 #   box ls                            machines that box started
 #
 # HEAD must be pushed. The checkout also has origin's default branch and every
 # --fetch branch as origin/<name>, 200 commits deep. The command itself can't
 # fetch, because the GitHub token is gone by the time it runs. Exits with the
-# command's exit code. The account allows 5 machines, so a run waits for a free one.
+# command's exit code. The plan allows 1 machine, so a run waits for a free one.
+#
+# runner registers the machine with the current repository, serves its queued
+# Actions jobs, and removes the runner and the machine once no run has been
+# queued or in progress for --idle minutes (default 10).
 set -u
 snapshot=${BOX_SNAPSHOT:-q9-base}
 
-usage() { sed -n '2,12p' "$0" >&2; exit 64; }
+usage() { sed -n '2,17p' "$0" >&2; exit 64; }
 
-case "${1:-}" in
+mode=${1:-}
+case "$mode" in
   ls) exec instabox ls --meta box=1 ;;
-  run) shift ;;
+  run|runner) shift ;;
   *) usage ;;
 esac
 keep=0
+idle=10
 branches=()
 while (($#)); do
-  case "$1" in
-    --keep) keep=1; shift ;;
-    --fetch) branches+=("${2:?--fetch needs a branch}"); shift 2 ;;
-    --) shift; break ;;
+  case "$mode $1" in
+    "run --keep") keep=1; shift ;;
+    "run --fetch") branches+=("${2:?--fetch needs a branch}"); shift 2 ;;
+    "runner --idle") idle=${2:?--idle needs minutes}; shift 2 ;;
+    "run --") shift; break ;;
     *) usage ;;
   esac
 done
-(($#)) || usage
+[[ $mode == runner ]] || (($#)) || usage
 command="$*"
 
 repo=$(git rev-parse --show-toplevel) || exit 1
@@ -82,6 +90,51 @@ done
 ((keep)) || trap 'instabox rm "$name" >/dev/null 2>&1 || echo "box: could not delete $name, remove it with: instabox rm $name" >&2' EXIT
 trap 'exit 130' INT TERM HUP
 echo "box: $name is up after $(( $(date +%s) - start ))s, running $sha" >&2
+
+if [[ $mode == runner ]]; then
+  slug=${origin#https://github.com/}
+  slug=${slug%.git}
+  version=$(gh api repos/actions/runner/releases/latest -q .tag_name) || exit 1
+  version=${version#v}
+  registration=$(gh api -X POST "repos/$slug/actions/runners/registration-token" -q .token) || exit 1
+  # An idle runner left registered would take no jobs but would still be listed,
+  # so the registration goes before the machine.
+  trap 'id=$(gh api "repos/$slug/actions/runners" -q ".runners[] | select(.name == \"$name\") | .id" 2>/dev/null)
+    [[ -n $id ]] && gh api -X DELETE "repos/$slug/actions/runners/$id" >/dev/null 2>&1
+    instabox rm "$name" >/dev/null 2>&1 || echo "box: could not delete $name, remove it with: instabox rm $name" >&2' EXIT
+  {
+    echo 'read -r T'
+    printf '%s\n' "$registration"
+    cat <<EOF
+mkdir -p ~/runner && cd ~/runner
+curl -fsSL https://github.com/actions/runner/releases/download/v$version/actions-runner-linux-x64-$version.tar.gz | tar xz
+sudo ./bin/installdependencies.sh >/dev/null
+./config.sh --unattended --url $(printf %q "$origin") --token "\$T" --name $name --labels instabox >/dev/null || exit 1
+unset T
+exec ./run.sh
+EOF
+  } | instabox ssh "$name" -- bash -l -s &
+  runner=$!
+  echo "box: runner $name serves $slug until it is idle for $idle minutes" >&2
+  last_busy=$(date +%s)
+  while kill -0 "$runner" 2>/dev/null; do
+    sleep 30
+    busy=0
+    for state in requested waiting pending queued in_progress; do
+      count=$(gh api "repos/$slug/actions/runs?status=$state&per_page=1" -q .total_count 2>/dev/null) || count=1
+      ((busy += count))
+    done
+    ((busy)) && last_busy=$(date +%s)
+    if (( $(date +%s) - last_busy >= idle * 60 )); then
+      echo "box: runner $name was idle for $idle minutes, stopping after $(( ($(date +%s) - start) / 60 )) minutes" >&2
+      kill "$runner" 2>/dev/null
+      exit 0
+    fi
+  done
+  wait "$runner"
+  echo "box: runner $name ended on its own with exit $?" >&2
+  exit 1
+fi
 
 # The token arrives on stdin, is used for one fetch, and is never stored on the
 # machine or visible to the command, which runs after it is unset.

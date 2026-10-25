@@ -1,6 +1,6 @@
 ---
 name: instabox
-description: Use when running heavy Linux work (a gate, a full test suite, a repo-wide typecheck or lint, a build, Docker, Playwright) off the Macs, or when managing the Q9 Instabox machines and snapshots.
+description: Use when running heavy Linux work (a gate, a full test suite, a repo-wide typecheck or lint, a build, Docker, Playwright) off the Macs, when GitHub Actions jobs need a self-hosted runner, or when managing the Q9 Instabox machines and snapshots.
 ---
 
 Run heavy work from the repo with `box` (this folder, linked as `~/.local/bin/box`):
@@ -9,11 +9,13 @@ Run heavy work from the repo with `box` (this folder, linked as `~/.local/bin/bo
 box run -- 'pnpm install --frozen-lockfile && pnpm gate:full'
 ```
 
-It starts a fresh machine from the `q9-base` snapshot, fetches your pushed HEAD from GitHub, runs the command, prints its output, deletes the machine, and exits with the command's exit code. So commit and push first, because uncommitted work doesn't reach the machine. Expect about 2.5 minutes to start the machine before the command runs. A run that finds all 5 machines in use waits for a free one, so parallel lanes can all call it.
+It starts a fresh machine from the `q9-base` snapshot, fetches your pushed HEAD from GitHub, runs the command, prints its output, deletes the machine, and exits with the command's exit code. So commit and push first, because uncommitted work doesn't reach the machine. Expect about 2.5 minutes to start the machine before the command runs. The plan allows 1 machine at a time, so a run that finds it in use waits for it, and parallel lanes queue behind each other.
 
 The checkout is 200 commits deep and also holds origin's default branch as `origin/<name>`. The command can't reach GitHub itself, so a `git fetch` inside it fails. Name every other branch the command needs with `--fetch <branch>`, which repeats.
 
-Leave out `--keep` unless you'll open the machine yourself (`instabox ssh <name>`) right after, then delete it with `instabox rm <name>`. A kept machine holds one of the 5 slots and makes every other lane wait. `box ls` lists the machines `box` started.
+Leave out `--keep` unless you'll open the machine yourself (`instabox ssh <name>`) right after, then delete it with `instabox rm <name>`. A kept machine holds the only slot and makes every other lane wait. `box ls` lists the machines `box` started.
+
+**GitHub Actions runner.** When a repo's workflows can't use GitHub-hosted runners, such as during a billing lock, point their `runs-on` at the `instabox` label and run `box runner` from the repo. It registers a machine as a self-hosted runner, serves the queued jobs, and deletes the runner and the machine after 10 minutes with no requested, waiting, queued or running workflow run (`--idle <minutes>` changes that). It holds the only slot while it runs. GitHub still starts self-hosted jobs during a billing lock; a probe confirmed this on 25 Oct 2026.
 
 **What a machine is.** x86 Linux with 4 vCPU, 8 GB of memory and 20 GB of disk. That's the only size on the free plan. Chalk's full gate peaks at 6.3 GB of memory and 9 GB of disk with its single-worker settings, so keep worker counts as the repo sets them. There's no macOS, Xcode or simulator, so that work goes to the M4. The machine pauses after 30 minutes idle and can't be told otherwise.
 
