@@ -1,6 +1,6 @@
 # Review plan
 
-Status of the review changes for Chalk and the other Q9 repos, as of 25 Oct 2026. The rules in force live in `~/.agents/docs/code-review.md` and the Review budget in `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`. This file holds what is proposed and not yet in force, so agents must not treat items 1 to 6 as rules.
+Status of the review changes for Chalk and the other Q9 repos, as of 25 Oct 2026. The rules in force live in `~/.agents/docs/code-review.md` and the Review budget in `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`. This file records what is in force and the baseline it is measured against.
 
 ## In place
 
@@ -9,14 +9,11 @@ Status of the review changes for Chalk and the other Q9 repos, as of 25 Oct 2026
 - CI that is still running is never a FIX.
 - Macroscope and CodeRabbit are dropped. Review stays with our own Sol judges.
 
-## Proposed, waits for Hasan's yes
+## Proposals
 
-1. Add a changeset-present check to Chalk's gate, so a missing changeset never reaches a judge. Home when approved: a Chalk PR on `.github/workflows/gate.yml`.
-2. Give a pre-merge judge only to high-risk PRs, and merge the rest when CI is green. Home when approved: the Review budget in `CLAUDE.md` and `AGENTS.md`.
-3. Run a daily deep pass: one lane on the Kaadr Codex account reads everything merged that day and blocks nothing. It looks for edge cases, fragile code and performance, including problems no user feels. Findings go to a backlog and become fix PRs, and a severe find means a rollback. Home when approved: a scheduled task in T3 Code.
-4. Re-measure Chalk's performance budgets on Instabox before enforcing them on every PR. The budgets were set on the retired Testbox.
-5. Gate releases on the last reviewed tag only if two weeks of the daily pass find user-visible defects in merged low-risk PRs most weeks. Release stays a manual dispatch until then. Home when approved: Chalk's Release workflow.
-6. Sync the rule files to the M4 when SSH to agents-macmini works. Files: `~/.agents/docs/code-review.md`, `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`.
+Proposals are open pull requests labelled `proposal` in `realhasanshoaib/agents-home` and `Q9Labs/chalk`. The diff is the change, and merging a pull request is Hasan's yes. Pull requests labelled `applied` record changes that are already in force.
+
+Work that needs no diff is an open action in the Q9 Brain: re-measure Chalk's performance budgets on Instabox, gate releases on the last reviewed tag only if the daily deep pass shows user-visible defects in merged low-risk PRs most weeks, and sync the rule files to the M4 when SSH to agents-macmini works.
 
 ## Baseline to measure against
 
