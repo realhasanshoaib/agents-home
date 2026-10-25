@@ -115,8 +115,11 @@ if [[ $mode == runner ]]; then
       gh api "repos/$slug/actions/runs/$run/jobs" -q '[.jobs[] | select(.status == "queued" and (.labels | index("instabox")))] | length' 2>/dev/null
     done | awk '{ n += $1 } END { print n + 0 }'
   }
-  busy() {
-    gh api "repos/$slug/actions/runners" -q ".runners[] | select(.name == \"$name\") | .busy" 2>/dev/null
+  # true or false while the runner is registered, gone once it isn't, error when GitHub doesn't answer.
+  runner_state() {
+    local state
+    state=$(gh api "repos/$slug/actions/runners" -q ".runners[] | select(.name == \"$name\") | .busy" 2>/dev/null) || { echo error; return; }
+    echo "${state:-gone}"
   }
   # A runner left registered would take no jobs but would still be listed, so
   # the registration goes before the machine.
@@ -158,20 +161,26 @@ exec ./run.sh
 EOF
     } | instabox ssh "$name" -- bash -l -s &
     runner=$!
-    # The runner exits after its job. If the job is cancelled before the
-    # runner takes it, the runner would wait forever, so it stops then.
-    gone=0
+    # The runner signs off after its job, but the ssh session can stall and
+    # never report that, so the sign-off ends the wait. A runner whose job was
+    # cancelled before it took one would wait forever, so that ends it too.
+    seen=0
+    idle_checks=0
     while kill -0 "$runner" 2>/dev/null; do
       sleep 30
-      if [[ $(busy) != true ]] && (( $(queued) == 0 )); then
-        ((++gone >= 2)) && kill "$runner" 2>/dev/null
+      state=$(runner_state)
+      [[ $state == true || $state == false ]] && seen=1
+      ((seen)) && [[ $state == gone ]] && break
+      if [[ $state == false || $state == gone ]] && (( $(queued) == 0 )); then
+        ((++idle_checks >= 2)) && break
       else
-        gone=0
+        idle_checks=0
       fi
     done
+    cleanup
+    kill -9 "$runner" 2>/dev/null
     wait "$runner"
     status=$?
-    cleanup
     ((status == 97)) && { echo "box: GitHub did not register the runner" >&2; exit 1; }
     last_busy=$(date +%s)
   done
