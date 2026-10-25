@@ -20,7 +20,7 @@ Follow [`docs/writing-style.md`](./docs/writing-style.md) for prose, reports, pu
 
 ## Review
 
-Follow [`docs/code-review.md`](./docs/code-review.md). Review real implementation changes once, fix genuine findings, and avoid spending review capacity on documents, scratchpads, or mechanical configuration.
+Every review rule lives in [`docs/code-review.md`](./docs/code-review.md). Read it before you decide whether a change gets a judge, before you brief one, and before you open a PR.
 
 ## Handoff
 
