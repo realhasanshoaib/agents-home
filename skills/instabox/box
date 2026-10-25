@@ -82,6 +82,11 @@ name="box-$slug-$(date +%H%M%S)-$$"
 start=$(date +%s)
 waiting=0
 until error=$(instabox create --name "$name" --snapshot "$snapshot" --no-vault --secrets none --meta box=1 --meta "host=$host" --meta "pid=$$" --meta "keep=$keep" 2>&1 >/dev/null); do
+  # Instabox's API gateway sometimes answers 5xx or times out; that is not a refusal.
+  if [[ $error == *"Bad Gateway"* || $error == *"Service Unavailable"* || $error == *"Gateway Time"* || $error == *"handshake timeout"* ]]; then
+    sleep 30
+    continue
+  fi
   [[ $error == *quota_exceeded* ]] || { echo "box: could not create $name: $error" >&2; exit 1; }
   ((waiting)) || echo "box: all machines are in use, waiting for one..." >&2
   waiting=1
