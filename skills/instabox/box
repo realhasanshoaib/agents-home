@@ -5,7 +5,7 @@
 #
 #   box run [--keep] [--fetch <branch>]... -- '<command>'
 #                                     e.g. box run -- 'pnpm install --frozen-lockfile && pnpm gate:full'
-#   box runner [--idle <minutes>]     a self-hosted GitHub Actions runner, label instabox
+#   box runner [--idle <minutes>]     self-hosted GitHub Actions runners, label instabox
 #   box ls                            machines that box started
 #
 # HEAD must be pushed. The checkout also has origin's default branch and every
@@ -13,13 +13,13 @@
 # fetch, because the GitHub token is gone by the time it runs. Exits with the
 # command's exit code. The plan allows 1 machine, so a run waits for a free one.
 #
-# runner registers the machine with the current repository, serves its queued
-# Actions jobs, and removes the runner and the machine once no run has been
-# queued or in progress for --idle minutes (default 10).
+# runner gives each queued job labelled instabox in the current repository a
+# fresh machine with a single-job runner, deletes the machine after the job, and
+# stops once no job has been queued for --idle minutes (default 10).
 set -u
 snapshot=${BOX_SNAPSHOT:-q9-base}
 
-usage() { sed -n '2,17p' "$0" >&2; exit 64; }
+usage() { sed -n '2,18p' "$0" >&2; exit 64; }
 
 mode=${1:-}
 case "$mode" in
@@ -47,7 +47,7 @@ sha=$(git -C "$repo" rev-parse HEAD) || exit 1
 origin=$(git -C "$repo" remote get-url origin) || exit 1
 if [[ $origin =~ ^git@github\.com:(.+)$ ]]; then origin="https://github.com/${BASH_REMATCH[1]}"; fi
 [[ $origin == https://github.com/* ]] || { echo "box: origin is not a GitHub URL: $origin" >&2; exit 1; }
-if [[ -n $(git -C "$repo" status --porcelain --untracked-files=no) ]]; then
+if [[ $mode == run && -n $(git -C "$repo" status --porcelain --untracked-files=no) ]]; then
   echo "box: uncommitted changes don't reach the machine. It runs $sha as pushed." >&2
 fi
 default=$(git -C "$repo" symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null) && branches+=("${default#origin/}")
@@ -77,69 +77,109 @@ for m in json.load(sys.stdin):
   instabox rm "$stale" >/dev/null 2>&1 && echo "box: deleted $stale, left behind by a run that ended" >&2
 done
 
-slug=$(basename "$repo" | tr 'A-Z' 'a-z' | tr -c 'a-z0-9\n' '-' | cut -c1-20)
-name="box-$slug-$(date +%H%M%S)-$$"
+prefix=$(basename "$repo" | tr 'A-Z' 'a-z' | tr -c 'a-z0-9\n' '-' | cut -c1-20)
 start=$(date +%s)
-waiting=0
-until error=$(instabox create --name "$name" --snapshot "$snapshot" --no-vault --secrets none --meta box=1 --meta "host=$host" --meta "pid=$$" --meta "keep=$keep" 2>&1 >/dev/null); do
-  # Instabox's API gateway sometimes answers 5xx or times out; that is not a refusal.
-  if [[ $error == *"Bad Gateway"* || $error == *"Service Unavailable"* || $error == *"Gateway Time"* || $error == *"handshake timeout"* ]]; then
+name=""
+
+# Starts a machine named $name, waiting while the plan's machines are all in use.
+create() {
+  local candidate="box-$prefix-$(date +%H%M%S)-$$" since waiting=0 error
+  since=$(date +%s)
+  until error=$(instabox create --name "$candidate" --snapshot "$snapshot" --no-vault --secrets none --meta box=1 --meta "host=$host" --meta "pid=$$" --meta "keep=$keep" 2>&1 >/dev/null); do
+    # Instabox's API gateway sometimes answers 5xx or times out; that is not a refusal.
+    if [[ $error == *"Bad Gateway"* || $error == *"Service Unavailable"* || $error == *"Gateway Time"* || $error == *"handshake timeout"* ]]; then
+      sleep 30
+      continue
+    fi
+    [[ $error == *quota_exceeded* ]] || { echo "box: could not create $candidate: $error" >&2; exit 1; }
+    ((waiting)) || echo "box: all machines are in use, waiting for one..." >&2
+    waiting=1
     sleep 30
-    continue
-  fi
-  [[ $error == *quota_exceeded* ]] || { echo "box: could not create $name: $error" >&2; exit 1; }
-  ((waiting)) || echo "box: all machines are in use, waiting for one..." >&2
-  waiting=1
-  sleep 30
-done
-((keep)) || trap 'instabox rm "$name" >/dev/null 2>&1 || echo "box: could not delete $name, remove it with: instabox rm $name" >&2' EXIT
+  done
+  name=$candidate
+  echo "box: $name is up after $(( $(date +%s) - since ))s" >&2
+}
 trap 'exit 130' INT TERM HUP
-echo "box: $name is up after $(( $(date +%s) - start ))s, running $sha" >&2
 
 if [[ $mode == runner ]]; then
   slug=${origin#https://github.com/}
   slug=${slug%.git}
   version=$(gh api repos/actions/runner/releases/latest -q .tag_name) || exit 1
   version=${version#v}
-  registration=$(gh api -X POST "repos/$slug/actions/runners/registration-token" -q .token) || exit 1
-  # An idle runner left registered would take no jobs but would still be listed,
-  # so the registration goes before the machine.
-  trap 'id=$(gh api "repos/$slug/actions/runners" -q ".runners[] | select(.name == \"$name\") | .id" 2>/dev/null)
+
+  # Jobs that wait for an instabox runner. Jobs stuck on other runners don't count.
+  queued() {
+    { for state in queued in_progress; do
+        gh api "repos/$slug/actions/runs?status=$state&per_page=100" -q '.workflow_runs[].id' 2>/dev/null
+      done; } | sort -u | while read -r run; do
+      gh api "repos/$slug/actions/runs/$run/jobs" -q '[.jobs[] | select(.status == "queued" and (.labels | index("instabox")))] | length' 2>/dev/null
+    done | awk '{ n += $1 } END { print n + 0 }'
+  }
+  busy() {
+    gh api "repos/$slug/actions/runners" -q ".runners[] | select(.name == \"$name\") | .busy" 2>/dev/null
+  }
+  # A runner left registered would take no jobs but would still be listed, so
+  # the registration goes before the machine.
+  cleanup() {
+    [[ -n $name ]] || return 0
+    local id
+    id=$(gh api "repos/$slug/actions/runners" -q ".runners[] | select(.name == \"$name\") | .id" 2>/dev/null)
     [[ -n $id ]] && gh api -X DELETE "repos/$slug/actions/runners/$id" >/dev/null 2>&1
-    instabox rm "$name" >/dev/null 2>&1 || echo "box: could not delete $name, remove it with: instabox rm $name" >&2' EXIT
-  {
-    echo 'read -r T'
-    printf '%s\n' "$registration"
-    cat <<EOF
+    instabox rm "$name" >/dev/null 2>&1 || echo "box: could not delete $name, remove it with: instabox rm $name" >&2
+    name=""
+  }
+  trap cleanup EXIT
+
+  # A job can leave a process behind that reads the secrets of the next job on
+  # the same machine, so every job gets its own machine and single-job runner.
+  echo "box: serving $slug until no job has been queued for $idle minutes" >&2
+  last_busy=$(date +%s)
+  while :; do
+    if (( $(queued) == 0 )); then
+      if (( $(date +%s) - last_busy >= idle * 60 )); then
+        echo "box: no job for $idle minutes, stopping after $(( ($(date +%s) - start) / 60 )) minutes" >&2
+        exit 0
+      fi
+      sleep 30
+      continue
+    fi
+    create
+    registration=$(gh api -X POST "repos/$slug/actions/runners/registration-token" -q .token) || exit 1
+    {
+      echo 'read -r T'
+      printf '%s\n' "$registration"
+      cat <<EOF
 mkdir -p ~/runner && cd ~/runner
 curl -fsSL https://github.com/actions/runner/releases/download/v$version/actions-runner-linux-x64-$version.tar.gz | tar xz
 sudo ./bin/installdependencies.sh >/dev/null
-./config.sh --unattended --url $(printf %q "https://github.com/$slug") --token "\$T" --name $name --labels instabox >/dev/null || exit 1
+./config.sh --unattended --ephemeral --url $(printf %q "https://github.com/$slug") --token "\$T" --name $name --labels instabox >/dev/null || exit 97
 unset T
 exec ./run.sh
 EOF
-  } | instabox ssh "$name" -- bash -l -s &
-  runner=$!
-  echo "box: runner $name serves $slug until it is idle for $idle minutes" >&2
-  last_busy=$(date +%s)
-  while kill -0 "$runner" 2>/dev/null; do
-    sleep 30
-    busy=0
-    for state in requested waiting pending queued in_progress; do
-      count=$(gh api "repos/$slug/actions/runs?status=$state&per_page=1" -q .total_count 2>/dev/null) || count=1
-      ((busy += count))
+    } | instabox ssh "$name" -- bash -l -s &
+    runner=$!
+    # The runner exits after its job. If the job is cancelled before the
+    # runner takes it, the runner would wait forever, so it stops then.
+    gone=0
+    while kill -0 "$runner" 2>/dev/null; do
+      sleep 30
+      if [[ $(busy) != true ]] && (( $(queued) == 0 )); then
+        ((++gone >= 2)) && kill "$runner" 2>/dev/null
+      else
+        gone=0
+      fi
     done
-    ((busy)) && last_busy=$(date +%s)
-    if (( $(date +%s) - last_busy >= idle * 60 )); then
-      echo "box: runner $name was idle for $idle minutes, stopping after $(( ($(date +%s) - start) / 60 )) minutes" >&2
-      kill "$runner" 2>/dev/null
-      exit 0
-    fi
+    wait "$runner"
+    status=$?
+    cleanup
+    ((status == 97)) && { echo "box: GitHub did not register the runner" >&2; exit 1; }
+    last_busy=$(date +%s)
   done
-  wait "$runner"
-  echo "box: runner $name ended on its own with exit $?" >&2
-  exit 1
 fi
+
+create
+((keep)) || trap 'instabox rm "$name" >/dev/null 2>&1 || echo "box: could not delete $name, remove it with: instabox rm $name" >&2' EXIT
+echo "box: running $sha on $name" >&2
 
 # The token arrives on stdin, is used for one fetch, and is never stored on the
 # machine or visible to the command, which runs after it is unset.
