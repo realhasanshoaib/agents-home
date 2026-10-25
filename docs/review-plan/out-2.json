@@ -1,0 +1,802 @@
+[
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-407-r1/verdict.md",
+    "pr": 407,
+    "round": 1,
+    "sev": "P3",
+    "category": "behaviour",
+    "catcher": "judge",
+    "blocker_new_rubric": false,
+    "quote": "Low (P3) — Missing surface still guesses the shared content.**  \nFile: [/Users/macmini/code/chalk/sdks/typescript/react/src/components/compo"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-417-r1/verdict.md",
+    "pr": 417,
+    "round": 1,
+    "sev": "P2",
+    "category": "behaviour",
+    "catcher": "builder",
+    "blocker_new_rubric": false,
+    "quote": "A local timeout while reading the response body loses its timeout classification in the new diagnostic.** I reproduced this with a real `htt"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-406-r9/verdict.md",
+    "pr": 406,
+    "round": 9,
+    "sev": "P2",
+    "category": "ci_pending",
+    "catcher": "wait",
+    "blocker_new_rubric": false,
+    "quote": "P2 — Required CI remains incomplete.** [/Users/macmini/code/chalk/.github/workflows/gate.yml:65](/Users/macmini/code/chalk/.github/workflows"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-396-r10/verdict.md",
+    "pr": 396,
+    "round": 10,
+    "sev": "P2",
+    "category": "ci_pending",
+    "catcher": "wait",
+    "blocker_new_rubric": false,
+    "quote": "P2 — Shipping verification incomplete** — [gate.yml:65](https://github.com/Q9Labs/chalk/blob/fd43d216130433bd0fb8c599d2df5449a830d36b/.githu"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-387-r3/verdict.md",
+    "pr": 387,
+    "round": 3,
+    "sev": "P2",
+    "category": "data_integrity",
+    "catcher": "judge",
+    "blocker_new_rubric": true,
+    "quote": "P2 — replacement forgets newly archived rows.** [HomePage.tsx:90](https://github.com/Q9Labs/chalk/blob/2c955609a196b4bf61977141501a30dcff1ae"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-387-r3/verdict.md",
+    "pr": 387,
+    "round": 3,
+    "sev": "P2",
+    "category": "behaviour",
+    "catcher": "builder",
+    "blocker_new_rubric": true,
+    "quote": "P2 — restored rows cannot regain their Live badge.** [HomePage.tsx:80](https://github.com/Q9Labs/chalk/blob/2c955609a196b4bf61977141501a30dc"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-387-r3/verdict.md",
+    "pr": 387,
+    "round": 3,
+    "sev": "P2",
+    "category": "behaviour",
+    "catcher": "builder",
+    "blocker_new_rubric": true,
+    "quote": "P2 — first-page discovery ignores a restored hidden row at the cap.** [HomePage.tsx:94](https://github.com/Q9Labs/chalk/blob/2c955609a196b4b"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-477-r1/verdict.md",
+    "pr": 477,
+    "round": 1,
+    "sev": "P2",
+    "category": "data_integrity",
+    "catcher": "judge",
+    "blocker_new_rubric": false,
+    "quote": "P2 — pre-existing transient admission race:** `apps/sync/lib/chalk_sync/whiteboard_v1/view_owner.ex:70-89`. Admission counts stored `people`"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-477-r1/verdict.md",
+    "pr": 477,
+    "round": 1,
+    "sev": "P2",
+    "category": "env_blocked",
+    "catcher": "wait",
+    "blocker_new_rubric": false,
+    "quote": "P2 — required independent proof missing:** `apps/sync/test/chalk_sync/whiteboard_v1/view_owner_test.exs:175-215`. Neither the lane's before/"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-406-r7/verdict.md",
+    "pr": 406,
+    "round": 7,
+    "sev": "P2",
+    "category": "ci_pending",
+    "catcher": "wait",
+    "blocker_new_rubric": false,
+    "quote": "P2 — CI shipping gate remains incomplete.** `.github/workflows/gate.yml:3`, `.github/workflows/release-contracts.yml:1`: at 2026-10-22 23:05"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-370-r5/verdict.md",
+    "pr": 370,
+    "round": 5,
+    "sev": "P2",
+    "category": "ci_pending",
+    "catcher": "wait",
+    "blocker_new_rubric": false,
+    "quote": "P2 — Exact-head ship gates are incomplete.** `scripts/gates/remote-queue.test.mjs:5` awaits the hosted Gate; the changed `scripts/gates/remo"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-406-r8/verdict.md",
+    "pr": 406,
+    "round": 8,
+    "sev": "P2",
+    "category": "ci_pending",
+    "catcher": "wait",
+    "blocker_new_rubric": false,
+    "quote": "P2 — CI shipping gate remains incomplete.** [.github/workflows/gate.yml:3](/Users/macmini/code/chalk/.github/workflows/gate.yml:3): [Gate is"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r6/verdict.md",
+    "pr": 348,
+    "round": 6,
+    "sev": "P1",
+    "category": "security_privacy",
+    "catcher": "judge",
+    "blocker_new_rubric": true,
+    "quote": "P1 — Configured credentials still reach Discord.** [apps/api/cmd/main.go:544](https://github.com/Q9Labs/chalk/blob/54ef0ce5b73759f5807636813"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r6/verdict.md",
+    "pr": 348,
+    "round": 6,
+    "sev": "P1",
+    "category": "security_privacy",
+    "catcher": "judge",
+    "blocker_new_rubric": true,
+    "quote": "P1 — Reporting can automatically disclose the account email.** [apps/api/db/queries/problem_reports.sql:2](https://github.com/Q9Labs/chalk/b"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r6/verdict.md",
+    "pr": 348,
+    "round": 6,
+    "sev": "P2",
+    "category": "behaviour",
+    "catcher": "builder",
+    "blocker_new_rubric": true,
+    "quote": "P2 — Accepted Space names lose their identifying suffix.** [apps/api/internal/adapters/discordreports/adapter.go:165](https://github.com/Q9L"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r6/verdict.md",
+    "pr": 348,
+    "round": 6,
+    "sev": "P2",
+    "category": "test_gap",
+    "catcher": "builder",
+    "blocker_new_rubric": false,
+    "quote": "P2 — The real-stack browser proof expects the obsolete label.** [apps/web/tests/dashboard/report-browser.mjs:70](https://github.com/Q9Labs/c"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-461-r2/verdict.md",
+    "pr": 461,
+    "round": 2,
+    "sev": "P1",
+    "category": "behaviour",
+    "catcher": "builder",
+    "blocker_new_rubric": true,
+    "quote": "P1 — Active participants lose their cached views.** [v1-client.ts:1097](https://github.com/Q9Labs/chalk/blob/26c4b3b3c57f7a8f09ac05b86b890c4"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-461-r2/verdict.md",
+    "pr": 461,
+    "round": 2,
+    "sev": "P2",
+    "category": "data_integrity",
+    "catcher": "judge",
+    "blocker_new_rubric": true,
+    "quote": "P2 — Recovery can silently discard Bring.** [socket_whiteboard_v1.ex:391](https://github.com/Q9Labs/chalk/blob/26c4b3b3c57f7a8f09ac05b86b890"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-461-r2/verdict.md",
+    "pr": 461,
+    "round": 2,
+    "sev": "P2",
+    "category": "behaviour",
+    "catcher": "judge",
+    "blocker_new_rubric": true,
+    "quote": "P2 — Retired publishers crowd active views out of reconnect snapshots.** [view_owner.ex:73](https://github.com/Q9Labs/chalk/blob/26c4b3b3c57"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-461-r2/verdict.md",
+    "pr": 461,
+    "round": 2,
+    "sev": "P3",
+    "category": "docs_or_copy",
+    "catcher": "builder",
+    "blocker_new_rubric": false,
+    "quote": "P3 — Capacity documentation is incorrect.** [apps/sync/README.md:129](https://github.com/Q9Labs/chalk/blob/26c4b3b3c57f7a8f09ac05b86b890c48b"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-386-r2/verdict.md",
+    "pr": 386,
+    "round": 2,
+    "sev": "P1",
+    "category": "ci_pending",
+    "catcher": "wait",
+    "blocker_new_rubric": false,
+    "quote": "P1 — Exact-head hosted Codex review has not completed.** Location: [github-gates.json:15](/Users/macmini/code/chalk/scratchpad/chalk-converg"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-427-r1/verdict.md",
+    "pr": 427,
+    "round": 1,
+    "sev": "P1",
+    "category": "env_blocked",
+    "catcher": "wait",
+    "blocker_new_rubric": false,
+    "quote": "P1 — Native universal links remain unproved.** [apps/mobile/plugins/SceneDelegate.swift:33](https://github.com/Q9Labs/chalk/blob/06008482648"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-427-r1/verdict.md",
+    "pr": 427,
+    "round": 1,
+    "sev": "P1",
+    "category": "env_blocked",
+    "catcher": "wait",
+    "blocker_new_rubric": false,
+    "quote": "P1 — Broadcast-picker proof is missing.** [sdks/typescript/react-native/src/components/native-space-view/screen-share-availability.ts:16](ht"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-427-r1/verdict.md",
+    "pr": 427,
+    "round": 1,
+    "sev": "P1",
+    "category": "ci_pending",
+    "catcher": "wait",
+    "blocker_new_rubric": false,
+    "quote": "P1 — Full exact-head CI is pending.** [.github/workflows/gate.yml:31](https://github.com/Q9Labs/chalk/blob/06008482648faf9a9904daf5911297087"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r8/verdict.md",
+    "pr": 348,
+    "round": 8,
+    "sev": "P1",
+    "category": "security_privacy",
+    "catcher": "judge",
+    "blocker_new_rubric": true,
+    "quote": "P1 — Round-7 SDK credential leak remains.** [apps/api/cmd/main.go:544](https://github.com/Q9Labs/chalk/blob/ac3bcd67f79bc55bec6ded00b34a6d68"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r8/verdict.md",
+    "pr": 348,
+    "round": 8,
+    "sev": "P1",
+    "category": "security_privacy",
+    "catcher": "judge",
+    "blocker_new_rubric": true,
+    "quote": "P1 — Username-only secret URLs omit their credential.** [apps/api/internal/config/secrets.go:51](https://github.com/Q9Labs/chalk/blob/ac3bcd"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r8/verdict.md",
+    "pr": 348,
+    "round": 8,
+    "sev": "P1",
+    "category": "security_privacy",
+    "catcher": "builder",
+    "blocker_new_rubric": true,
+    "quote": "P1 — Mixed-case Discord hosts bypass credential detection.** [apps/api/internal/problemreports/credentials.go:163](https://github.com/Q9Labs"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r8/verdict.md",
+    "pr": 348,
+    "round": 8,
+    "sev": "P2",
+    "category": "behaviour",
+    "catcher": "builder",
+    "blocker_new_rubric": true,
+    "quote": "P2 — Live reports still lose their draft on a terminal transition.** [sdks/typescript/react/src/components/space-header/SpaceHeader.tsx:114]"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r8/verdict.md",
+    "pr": 348,
+    "round": 8,
+    "sev": "P3",
+    "category": "release_metadata",
+    "catcher": "builder",
+    "blocker_new_rubric": false,
+    "quote": "P3 — Release note omits the new public prop name.** [.changeset/problem-reporting.md:9](https://github.com/Q9Labs/chalk/blob/ac3bcd67f79bc55"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-459-r1/verdict.md",
+    "pr": 459,
+    "round": 1,
+    "sev": "P2",
+    "category": "test_gap",
+    "catcher": "builder",
+    "blocker_new_rubric": false,
+    "quote": "P2 — Timeout isolation remains broken at [HomePage.polling.test.tsx:84](https://github.com/Q9Labs/chalk/blob/c42d0aff9d1f24464cfaa03cbc26506"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-459-r1/verdict.md",
+    "pr": 459,
+    "round": 1,
+    "sev": "P2",
+    "category": "test_gap",
+    "catcher": "builder",
+    "blocker_new_rubric": false,
+    "quote": "P2 — Visibility coverage is weakened at [HomePage.polling.test.tsx:109](https://github.com/Q9Labs/chalk/blob/c42d0aff9d1f24464cfaa03cbc26506"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-431-r2/verdict.md",
+    "pr": 431,
+    "round": 2,
+    "sev": "P1",
+    "category": "ci_pending",
+    "catcher": "wait",
+    "blocker_new_rubric": false,
+    "quote": "P1 — Required acceptance evidence remains incomplete — `.github/workflows/gate.yml:181`.** The [exact-head Gate run](https://github.com/Q9La"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-384-r6/verdict.md",
+    "pr": 384,
+    "round": 6,
+    "sev": "P1",
+    "category": "other",
+    "catcher": "static",
+    "blocker_new_rubric": true,
+    "quote": "P1 — Required CI failed.** [tracking.ts:45](https://github.com/Q9Labs/chalk/blob/6128703f2f8707389f4e69b4b4a281366600df86/apps/web/src/lib/d"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-384-r6/verdict.md",
+    "pr": 384,
+    "round": 6,
+    "sev": "P2",
+    "category": "behaviour",
+    "catcher": "builder",
+    "blocker_new_rubric": true,
+    "quote": "P2 — A valid newer transcript action disappears behind an older video.** [tracking.ts:84](https://github.com/Q9Labs/chalk/blob/6128703f2f870"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-384-r7/verdict.md",
+    "pr": 384,
+    "round": 7,
+    "sev": "P1",
+    "category": "ci_pending",
+    "catcher": "wait",
+    "blocker_new_rubric": false,
+    "quote": "P1 — Shipping checks remain incomplete.** [`.github/workflows/gate.yml:182`](https://github.com/Q9Labs/chalk/blob/fa7c6eef5b4b581230d8e236be"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-384-r9/verdict.md",
+    "pr": 384,
+    "round": 9,
+    "sev": "P2",
+    "category": "behaviour",
+    "catcher": "builder",
+    "blocker_new_rubric": true,
+    "quote": "P2 — Terminally unreadable recording still selected for Prepare.** [apps/web/src/lib/dashboard/tracking.ts:78](https://github.com/Q9Labs/cha"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-384-r9/verdict.md",
+    "pr": 384,
+    "round": 9,
+    "sev": "P1",
+    "category": "ci_pending",
+    "catcher": "wait",
+    "blocker_new_rubric": false,
+    "quote": "P1 — Shipping gates incomplete.** [.github/workflows/gate.yml:182](https://github.com/Q9Labs/chalk/blob/ed18c2406c114ed1a168da93a31f4fd146dc"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-418-r1/verdict.md",
+    "pr": 418,
+    "round": 1,
+    "sev": "P2",
+    "category": "test_gap",
+    "catcher": "builder",
+    "blocker_new_rubric": false,
+    "quote": "Medium — verification blocker**, [apps/sync/mix.exs:27](https://github.com/Q9Labs/chalk/blob/308e471c24dd1f4a5e1baf22b9843a6dd9e07d95/apps/s"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-479-r1/verdict-ebcf47cd7.md",
+    "pr": 479,
+    "round": 1,
+    "sev": "P2",
+    "category": "data_integrity",
+    "catcher": "judge",
+    "blocker_new_rubric": true,
+    "quote": "P2 — Uncertain HTTP 5xx mutations are replayed on the same session.** [service.go:190](https://github.com/Q9Labs/chalk/blob/ebcf47cd79fc0eee"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-479-r1/verdict-ebcf47cd7.md",
+    "pr": 479,
+    "round": 1,
+    "sev": "P2",
+    "category": "data_integrity",
+    "catcher": "judge",
+    "blocker_new_rubric": true,
+    "quote": "P2 — Durable stop does not prevent the next media retry.** [service.go:140](https://github.com/Q9Labs/chalk/blob/ebcf47cd79fc0eee98f63f21732"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r12/verdict.md",
+    "pr": 348,
+    "round": 12,
+    "sev": "P2",
+    "category": "ci_pending",
+    "catcher": "wait",
+    "blocker_new_rubric": false,
+    "quote": "P2 — merge gates (file:line N/A).** [CI](https://github.com/Q9Labs/chalk/actions/runs/39978500209) still has four running jobs: Root checks,"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-465-r3/verdict.md",
+    "pr": 465,
+    "round": 3,
+    "sev": "P2",
+    "category": "gate_or_tooling",
+    "catcher": "judge",
+    "blocker_new_rubric": false,
+    "quote": "P2 — Board teardown failure skips participant leave.** `/Users/macmini/code/chalk/scripts/web-proof/guest.mjs:59`: if `setPresentation(false"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-420-r4/verdict.md",
+    "pr": 420,
+    "round": 4,
+    "sev": "P2",
+    "category": "release_metadata",
+    "catcher": "builder",
+    "blocker_new_rubric": false,
+    "quote": "P2 — Missing React Native release note.** [`sdks/typescript/react-native/CHANGELOG.md:4`](https://github.com/Q9Labs/chalk/blob/d504cf4864559"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-420-r4/verdict.md",
+    "pr": 420,
+    "round": 4,
+    "sev": "P2",
+    "category": "ci_pending",
+    "catcher": "wait",
+    "blocker_new_rubric": false,
+    "quote": "P2 — Exact-head release-readiness checks remain incomplete.** [`.github/workflows/gate.yml:31`](https://github.com/Q9Labs/chalk/blob/d504cf4"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-469-r1/verdict.md",
+    "pr": 469,
+    "round": 1,
+    "sev": "P1",
+    "category": "ci_pending",
+    "catcher": "wait",
+    "blocker_new_rubric": false,
+    "quote": "P1 — Required CI is unfinished — `.github/workflows/gate.yml:74`.** At the final check, **Root tests was queued** and **Root call-leaks was "
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-396-r9/verdict.md",
+    "pr": 396,
+    "round": 9,
+    "sev": "P2",
+    "category": "behaviour",
+    "catcher": "builder",
+    "blocker_new_rubric": true,
+    "quote": "P2 — Shared content becomes unreachable in short calls.** [Stage.tsx:405](https://github.com/Q9Labs/chalk/blob/54b24dc9a851443329ef852388ac7"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-423-r2/verdict.md",
+    "pr": 423,
+    "round": 2,
+    "sev": "P2",
+    "category": "data_integrity",
+    "catcher": "judge",
+    "blocker_new_rubric": false,
+    "quote": "P2 — Interrupted recovery leaves invalid indexes behind.** [20261022230000_space_activity_recent_participants_index.sql:13](https://github.c"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-472-r2/verdict.md",
+    "pr": 472,
+    "round": 2,
+    "sev": "P2",
+    "category": "gate_or_tooling",
+    "catcher": "judge",
+    "blocker_new_rubric": false,
+    "quote": "P2 — The advisory ignore still covers lockfiles the guard never checks. `scripts/gates/osv-scanner.sh:18`.** The lane scans npm and Yarn loc"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-472-r2/verdict.md",
+    "pr": 472,
+    "round": 2,
+    "sev": "P3",
+    "category": "gate_or_tooling",
+    "catcher": "judge",
+    "blocker_new_rubric": false,
+    "quote": "P3 — Expo upgrade failures lack remediation. `scripts/gates/zod-exception.mjs:55`.** The error prints only the rejected chain. Exact Expo pi"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-396-r1/verdict.md",
+    "pr": 396,
+    "round": 1,
+    "sev": "P2",
+    "category": "behaviour",
+    "catcher": "builder",
+    "blocker_new_rubric": true,
+    "quote": "P2 — Bound notices by the available call height\n\n**File:** `/Users/macmini/code/chalk/packages/ui/src/styles/index.css:824`.\n\n**Evidence:** "
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-396-r1/verdict.md",
+    "pr": 396,
+    "round": 1,
+    "sev": "P2",
+    "category": "behaviour",
+    "catcher": "builder",
+    "blocker_new_rubric": true,
+    "quote": "P2 — The first preserved share can still intercept zoom controls\n\n**File:** `/Users/macmini/code/chalk/sdks/typescript/react/src/components/"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-396-r1/verdict.md",
+    "pr": 396,
+    "round": 1,
+    "sev": "P2",
+    "category": "behaviour",
+    "catcher": "builder",
+    "blocker_new_rubric": true,
+    "quote": "P2 — Horizontal wrapping can remove shares and the People overflow button\n\n**File:** `/Users/macmini/code/chalk/sdks/typescript/react/src/co"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-396-r1/verdict.md",
+    "pr": 396,
+    "round": 1,
+    "sev": "P2",
+    "category": "spec_mismatch",
+    "catcher": "builder",
+    "blocker_new_rubric": false,
+    "quote": "P2 — The requested landscape-phone outcome is not implemented\n\n**File:** `/Users/macmini/code/chalk/sdks/typescript/react/src/components/sta"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-470-r1/verdict.md",
+    "pr": 470,
+    "round": 1,
+    "sev": "P1",
+    "category": "behaviour",
+    "catcher": "judge",
+    "blocker_new_rubric": true,
+    "quote": "P1 — Provider waits can suspend reconciliation beyond demand freshness.** [recorder_fleet.go:462](https://github.com/Q9Labs/chalk/blob/38bf6"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-470-r1/verdict.md",
+    "pr": 470,
+    "round": 1,
+    "sev": "P1",
+    "category": "behaviour",
+    "catcher": "judge",
+    "blocker_new_rubric": true,
+    "quote": "P1 — An unhealthy spare can remain unusable indefinitely.** [reconciler.go:118](https://github.com/Q9Labs/chalk/blob/38bf6a820f4a36d460a3a67"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-470-r1/verdict.md",
+    "pr": 470,
+    "round": 1,
+    "sev": "P2",
+    "category": "behaviour",
+    "catcher": "judge",
+    "blocker_new_rubric": false,
+    "quote": "P2 — Absurd deadlines poison the shared budget.** [recorder_fleet.go:455](https://github.com/Q9Labs/chalk/blob/38bf6a820f4a36d460a3a678bbe1a"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-409-r2/verdict.md",
+    "pr": 409,
+    "round": 2,
+    "sev": "P2",
+    "category": "ci_pending",
+    "catcher": "wait",
+    "blocker_new_rubric": false,
+    "quote": "P2 — CI verification is still pending, not a code defect.** Location: [.github/workflows/gate.yml:33](https://github.com/Q9Labs/chalk/blob/7"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-370-r6/verdict.md",
+    "pr": 370,
+    "round": 6,
+    "sev": "P2",
+    "category": "gate_or_tooling",
+    "catcher": "builder",
+    "blocker_new_rubric": false,
+    "quote": "P2 — The normal iOS path does not select its slot’s Metro.** [remote-slot-env.sh:17](https://github.com/Q9Labs/chalk/blob/8607eda202907a3607"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-370-r6/verdict.md",
+    "pr": 370,
+    "round": 6,
+    "sev": "P2",
+    "category": "other",
+    "catcher": "builder",
+    "blocker_new_rubric": false,
+    "quote": "P2 — The exact-head Codex acceptance gate is not met.** At 01:44 UTC, all 21 threads were retrieved, with **four unresolved**, and [Codex’s "
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-414-r1/verdict.md",
+    "pr": 414,
+    "round": 1,
+    "sev": "P2",
+    "category": "gate_or_tooling",
+    "catcher": "judge",
+    "blocker_new_rubric": false,
+    "quote": "P2 — Preserve scheduled nightly’s push-only Gate rule.** [scripts/releases/release.py:191](https://github.com/Q9Labs/chalk/blob/b7af582d8c23"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-474-r1/verdict.md",
+    "pr": 474,
+    "round": 1,
+    "sev": null,
+    "category": "ci_pending",
+    "catcher": "wait",
+    "blocker_new_rubric": false,
+    "quote": "Verification blocker, not a code defect — `.github/workflows/gate.yml:65`.** The final GitHub check showed [Root call-leaks](https://github."
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-428-r3/verdict.md",
+    "pr": 428,
+    "round": 3,
+    "sev": "P2",
+    "category": "data_integrity",
+    "catcher": "judge",
+    "blocker_new_rubric": true,
+    "quote": "P2 — Discarded policy changes can replay after restart.** `sdks/typescript/client/src/whiteboard/v1-client.ts` [line 645](https://github.com"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-455-r1/verdict.md",
+    "pr": 455,
+    "round": 1,
+    "sev": null,
+    "category": "other",
+    "catcher": "judge",
+    "blocker_new_rubric": false,
+    "quote": "NO FINDINGS PARSED"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-472-r3/verdict.md",
+    "pr": 472,
+    "round": 3,
+    "sev": "P2",
+    "category": "gate_or_tooling",
+    "catcher": "judge",
+    "blocker_new_rubric": false,
+    "quote": "P2 — `scripts/gates/osv-scanner.sh:8`: `npm-shrinkwrap.json` bypasses the policy.** A tracked root shrinkwrap containing production zod 3.25"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-472-r4/verdict.md",
+    "pr": 472,
+    "round": 4,
+    "sev": "P2",
+    "category": "gate_or_tooling",
+    "catcher": "judge",
+    "blocker_new_rubric": false,
+    "quote": "P2 — `scripts/gates/osv-scanner.sh:7`: tracked, gitignored lockfiles bypass validation.** A force-added `runtime/package-lock.json` containi"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-472-r4/verdict.md",
+    "pr": 472,
+    "round": 4,
+    "sev": "P2",
+    "category": "gate_or_tooling",
+    "catcher": "judge",
+    "blocker_new_rubric": false,
+    "quote": "P2 — `scripts/gates/osv-scanner.sh:7`: tracked lockfile symlinks are skipped.** A committed `runtime/package-lock.json` symlink to committed"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r5/verdict.md",
+    "pr": 348,
+    "round": 5,
+    "sev": "P1",
+    "category": "security_privacy",
+    "catcher": "judge",
+    "blocker_new_rubric": true,
+    "quote": "P1 — The 16-character cutoff skips valid configured credentials.** [apps/api/internal/problemreports/credentials.go:59](https://github.com/Q"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-461-r1/verdict.md",
+    "pr": 461,
+    "round": 1,
+    "sev": "P1",
+    "category": "behaviour",
+    "catcher": "builder",
+    "blocker_new_rubric": true,
+    "quote": "P1 — Animated zoom does not publish its final real move.** [Board.tsx:177](https://github.com/Q9Labs/chalk/blob/ec4b58874fe7b725f2d3e0e32c1e"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-461-r1/verdict.md",
+    "pr": 461,
+    "round": 1,
+    "sev": "P1",
+    "category": "data_integrity",
+    "catcher": "judge",
+    "blocker_new_rubric": true,
+    "quote": "P1 — A real move can disappear across reconnect without a retry.** [v1-client.ts:273](https://github.com/Q9Labs/chalk/blob/ec4b58874fe7b725f"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-461-r1/verdict.md",
+    "pr": 461,
+    "round": 1,
+    "sev": "P1",
+    "category": "behaviour",
+    "catcher": "builder",
+    "blocker_new_rubric": true,
+    "quote": "P1 — The owner rejects supported Episode participants after 256 identities.** [view_owner.ex:68](https://github.com/Q9Labs/chalk/blob/ec4b58"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-461-r1/verdict.md",
+    "pr": 461,
+    "round": 1,
+    "sev": "P2",
+    "category": "behaviour",
+    "catcher": "builder",
+    "blocker_new_rubric": true,
+    "quote": "P2 — Existing direct SDK usage becomes a heartbeat.** [v1-client.ts:281](https://github.com/Q9Labs/chalk/blob/ec4b58874fe7b725f2d3e0e32c1e37"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-461-r1/verdict.md",
+    "pr": 461,
+    "round": 1,
+    "sev": "P2",
+    "category": "other",
+    "catcher": "static",
+    "blocker_new_rubric": true,
+    "quote": "P2 — Required CI fails on the new proof script, not HomePage polling.** [count-lines.mjs:1](https://github.com/Q9Labs/chalk/blob/ec4b58874fe"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-406-r2/verdict.md",
+    "pr": 406,
+    "round": 2,
+    "sev": "P2",
+    "category": "behaviour",
+    "catcher": "builder",
+    "blocker_new_rubric": true,
+    "quote": "P2 — Inline media alerts still bypass the safe formatter.** The keyboard toast defect is fixed, but three public UI paths still render raw m"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-428-r5/verdict.md",
+    "pr": 428,
+    "round": 5,
+    "sev": "P1",
+    "category": "ci_pending",
+    "catcher": "wait",
+    "blocker_new_rubric": false,
+    "quote": "P1 — required CI evidence incomplete. File:line:** N/A (external checks). **Evidence:** at **15:59:27 UTC, October 23**, nine jobs remained "
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-400-r1/verdict.md",
+    "pr": 400,
+    "round": 1,
+    "sev": "P1",
+    "category": "data_integrity",
+    "catcher": "judge",
+    "blocker_new_rubric": true,
+    "quote": "P1 — Retirement still depends on arrival order, so it can retire the current stream\n\n**File:line:** `sdks/typescript/react/src/components/bo"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-400-r1/verdict.md",
+    "pr": 400,
+    "round": 1,
+    "sev": "P2",
+    "category": "release_metadata",
+    "catcher": "static",
+    "blocker_new_rubric": false,
+    "quote": "P2 — Missing consumer changeset\n\n**File:line:** `sdks/typescript/react/src/components/board/Board.tsx:363`; missing `.changeset/<name>.md`.\n"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-420-r1/verdict.md",
+    "pr": 420,
+    "round": 1,
+    "sev": "P2",
+    "category": "release_metadata",
+    "catcher": "builder",
+    "blocker_new_rubric": false,
+    "quote": "P2 — Release notes omit shipped changes.** `/Users/macmini/code/chalk/sdks/typescript/react/CHANGELOG.md:3`, `/Users/macmini/code/chalk/sdks"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-420-r1/verdict.md",
+    "pr": 420,
+    "round": 1,
+    "sev": "P2",
+    "category": "gate_or_tooling",
+    "catcher": "static",
+    "blocker_new_rubric": false,
+    "quote": "P2 — Packed release artifacts contain tests and declaration source maps.** `/Users/macmini/code/chalk/sdks/typescript/react-native/package.j"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-479-r2/verdict.md",
+    "pr": 479,
+    "round": 2,
+    "sev": "P2",
+    "category": "data_integrity",
+    "catcher": "judge",
+    "blocker_new_rubric": true,
+    "quote": "P2 — Retirement uses the last completed plan revision after a newer reconciliation partly succeeds.** [coordinator.go:274](https://github.co"
+  },
+  {
+    "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-459-r1/evidence/verdict-before-cascade.md",
+    "pr": 459,
+    "round": 1,
+    "sev": "P2",
+    "category": "test_gap",
+    "catcher": "builder",
+    "blocker_new_rubric": false,
+    "quote": "P2 — Hidden-control and accessible-name coverage is weakened.** [apps/web/src/components/dashboard/HomePage.polling.test.tsx:109](https://gi"
+  }
+]

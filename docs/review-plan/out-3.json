@@ -1,0 +1,962 @@
+[
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-396-r4/verdict.md",
+  "pr": 396,
+  "round": 4,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "judge",
+  "blocker_new_rubric": true,
+  "quote": "Replacement command errors can remain unannounced.** [ToastStack.tsx:42](https://github.com/Q9Labs/chalk/blob/be8c346894661aab9005aefd3cbdd8"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-396-r4/verdict.md",
+  "pr": 396,
+  "round": 4,
+  "sev": "P2",
+  "category": "gate_or_tooling",
+  "catcher": "builder",
+  "blocker_new_rubric": false,
+  "quote": "The full browser matrix outlives its server.** [stage.test.ts:457](https://github.com/Q9Labs/chalk/blob/be8c346894661aab9005aefd3cbdd84799f0"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-384-r11/verdict.md",
+  "pr": 384,
+  "round": 11,
+  "sev": "P2",
+  "category": "test_gap",
+  "catcher": "builder",
+  "blocker_new_rubric": false,
+  "quote": "Matrix violates the required pure-logic design.** [PastSessionPage.selection.test.tsx:105](https://github.com/Q9Labs/chalk/blob/fae07b78a709"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-384-r11/verdict.md",
+  "pr": 384,
+  "round": 11,
+  "sev": "P1",
+  "category": "ci_pending",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "Exact-head CI is not green yet.** [gate.yml:182](https://github.com/Q9Labs/chalk/blob/fae07b78a709a14c9051d8871b152047c54c1be5/.github/workf"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r7/verdict.md",
+  "pr": 348,
+  "round": 7,
+  "sev": "P1",
+  "category": "security_privacy",
+  "catcher": "judge",
+  "blocker_new_rubric": true,
+  "quote": "SDK-loaded credentials still reach Discord.** [apps/api/cmd/main.go:544](https://github.com/Q9Labs/chalk/blob/10e9f8c48bdd3e725dd0d05c475fbe"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r7/verdict.md",
+  "pr": 348,
+  "round": 7,
+  "sev": "P1",
+  "category": "security_privacy",
+  "catcher": "judge",
+  "blocker_new_rubric": true,
+  "quote": "Dashboard owners still disclose the email fallback.** [apps/api/db/queries/problem_reports.sql:3](https://github.com/Q9Labs/chalk/blob/10e9f"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r7/verdict.md",
+  "pr": 348,
+  "round": 7,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "builder",
+  "blocker_new_rubric": false,
+  "quote": "Dashboard input still has a different name bound.** [apps/web/src/components/dashboard/HomePage.tsx:410](https://github.com/Q9Labs/chalk/blo"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-358-r8/verdict.md",
+  "pr": 358,
+  "round": 8,
+  "sev": "P2",
+  "category": "release_metadata",
+  "catcher": "static",
+  "blocker_new_rubric": false,
+  "quote": "[.changeset/confirmed-call-entry.md:2](https://github.com/Q9Labs/chalk/blob/70c2dc59718084e1f1599a47eb1cf50b92400c74/.changeset/confirmed-ca"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-358-r8/verdict.md",
+  "pr": 358,
+  "round": 8,
+  "sev": "P2",
+  "category": "test_gap",
+  "catcher": "builder",
+  "blocker_new_rubric": false,
+  "quote": "[apps/web/tests/dashboard/owner-leave-unconfirmed.mjs:61](https://github.com/Q9Labs/chalk/blob/70c2dc59718084e1f1599a47eb1cf50b92400c74/apps"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-422-r1/verdict.md",
+  "pr": 422,
+  "round": 1,
+  "sev": "P2",
+  "category": "ci_pending",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "CI is not green.** Location: [ci-state.json:1](/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-422-r1/ci-state.json:1)."
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-422-r1/verdict.md",
+  "pr": 422,
+  "round": 1,
+  "sev": "P2",
+  "category": "ci_pending",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "Clean GitHub Codex review is not on this head.** Location: [review-state.json:1](/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-358-r9/verdict.md",
+  "pr": 358,
+  "round": 9,
+  "sev": "P1",
+  "category": "ci_pending",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "[.github/workflows/gate.yml:3](https://github.com/Q9Labs/chalk/blob/8529ea19c23066a4bc61e9b500cf36b513aab23a/.github/workflows/gate.yml#L3):"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-358-r9/verdict.md",
+  "pr": 358,
+  "round": 9,
+  "sev": "P2",
+  "category": "test_gap",
+  "catcher": "builder",
+  "blocker_new_rubric": false,
+  "quote": "[apps/web/tests/dashboard/owner-leave-unconfirmed.mjs:103](https://github.com/Q9Labs/chalk/blob/8529ea19c23066a4bc61e9b500cf36b513aab23a/app"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r9/verdict.md",
+  "pr": 348,
+  "round": 9,
+  "sev": "P1",
+  "category": "security_privacy",
+  "catcher": "judge",
+  "blocker_new_rubric": true,
+  "quote": "Explicit-port webhooks bypass the detector.** [credentials.go:161](https://github.com/Q9Labs/chalk/blob/ef666aaf2030b6e75a6b23c66d164d31ab1f"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r9/verdict.md",
+  "pr": 348,
+  "round": 9,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "builder",
+  "blocker_new_rubric": true,
+  "quote": "Ordinary text is rejected.** [credentials.go:161](https://github.com/Q9Labs/chalk/blob/ef666aaf2030b6e75a6b23c66d164d31ab1fd060/apps/api/int"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r9/verdict.md",
+  "pr": 348,
+  "round": 9,
+  "sev": "P2",
+  "category": "docs_or_copy",
+  "catcher": "builder",
+  "blocker_new_rubric": false,
+  "quote": "Codex disclosure finding is real.** [LegalPage.tsx:239](https://github.com/Q9Labs/chalk/blob/ef666aaf2030b6e75a6b23c66d164d31ab1fd060/apps/w"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r9/verdict.md",
+  "pr": 348,
+  "round": 9,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "judge",
+  "blocker_new_rubric": true,
+  "quote": "Codex live guest expiry finding is real.** [SpacePage.tsx:364](https://github.com/Q9Labs/chalk/blob/ef666aaf2030b6e75a6b23c66d164d31ab1fd060"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r9/verdict.md",
+  "pr": 348,
+  "round": 9,
+  "sev": "P2",
+  "category": "data_integrity",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "Codex stale diagnostics finding is real.** [SpacePage.tsx:563](https://github.com/Q9Labs/chalk/blob/ef666aaf2030b6e75a6b23c66d164d31ab1fd060"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r9/verdict.md",
+  "pr": 348,
+  "round": 9,
+  "sev": "P2",
+  "category": "test_gap",
+  "catcher": "static",
+  "blocker_new_rubric": true,
+  "quote": "New tests fail the required typecheck.** [OwnerCall.test.tsx:104](https://github.com/Q9Labs/chalk/blob/ef666aaf2030b6e75a6b23c66d164d31ab1fd"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-397-r2/verdict.md",
+  "pr": 397,
+  "round": 2,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "builder",
+  "blocker_new_rubric": true,
+  "quote": "The name label becomes effectively invisible in light mode.** File: `/Users/macmini/code/chalk/.worktrees/judge-397-r2/apps/web/src/componen"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-397-r2/verdict.md",
+  "pr": 397,
+  "round": 2,
+  "sev": "P2",
+  "category": "spec_mismatch",
+  "catcher": "builder",
+  "blocker_new_rubric": false,
+  "quote": "The fixed form width does not match the approved mockup.** File: `/Users/macmini/code/chalk/.worktrees/judge-397-r2/apps/web/src/components/"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r1/verdict.md",
+  "pr": 348,
+  "round": 1,
+  "sev": "P1",
+  "category": "security_privacy",
+  "catcher": "judge",
+  "blocker_new_rubric": true,
+  "quote": "Sanitization reconstructs links and credentials.** [client.go:104–105](https://github.com/Q9Labs/chalk/blob/192d95cc54f5a10d1df3d737192e37b6"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r1/verdict.md",
+  "pr": 348,
+  "round": 1,
+  "sev": "P2",
+  "category": "security_privacy",
+  "catcher": "judge",
+  "blocker_new_rubric": true,
+  "quote": "No independent user/IP report ceiling.** [problem_reports.go:89](https://github.com/Q9Labs/chalk/blob/192d95cc54f5a10d1df3d737192e37b676912a"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r1/verdict.md",
+  "pr": 348,
+  "round": 1,
+  "sev": "P1",
+  "category": "ci_pending",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "Required CI is not green.** [gate.yml:180](https://github.com/Q9Labs/chalk/blob/192d95cc54f5a10d1df3d737192e37b676912abc/.github/workflows/g"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-420-r5/verdict.md",
+  "pr": 420,
+  "round": 5,
+  "sev": "P2",
+  "category": "ci_pending",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "Exact-head release readiness incomplete.** [`.github/workflows/gate.yml:31`](https://github.com/Q9Labs/chalk/blob/80e7b2f5116ce1e62dcf5916e8"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-461-r5/verdict.md",
+  "pr": 461,
+  "round": 5,
+  "sev": "P2",
+  "category": "release_metadata",
+  "catcher": "static",
+  "blocker_new_rubric": false,
+  "quote": "`.changeset/follow-view-owner.md:4`: whiteboard also needs a minor.** Its publicly exported `WhiteboardCollaborationEvent` adds `ownerId`, `"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-396-r2/verdict.md",
+  "pr": 396,
+  "round": 2,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "Notices still take the board controls’ clicks.** [packages/ui/src/styles/index.css:1247](https://github.com/Q9Labs/chalk/blob/bf239be0af7894"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-396-r2/verdict.md",
+  "pr": 396,
+  "round": 2,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "Applying #408 breaks the promised notice clearance below the header.** [packages/ui/src/styles/index.css:1247](https://github.com/Q9Labs/cha"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-406-r6/verdict.md",
+  "pr": 406,
+  "round": 6,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "builder",
+  "blocker_new_rubric": true,
+  "quote": "Integrated requests lose their operation.** [Chalk.tsx:300](https://github.com/Q9Labs/chalk/blob/4c5d74044ceb15e89f64b1f4cb50876d9022afc9/sd"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-406-r6/verdict.md",
+  "pr": 406,
+  "round": 6,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "judge",
+  "blocker_new_rubric": true,
+  "quote": "An unrecognized runtime code crashes error rendering.** [command-failure.ts:114](https://github.com/Q9Labs/chalk/blob/4c5d74044ceb15e89f64b1"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-368-r10/verdict.md",
+  "pr": 368,
+  "round": 10,
+  "sev": "P2",
+  "category": "security_privacy",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "Production and nightly lack credential isolation.** [`.github/workflows/ci.yml:998`](https://github.com/Q9Labs/chalk/blob/0432c9017ddfcc9432"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-368-r10/verdict.md",
+  "pr": 368,
+  "round": 10,
+  "sev": "P2",
+  "category": "data_integrity",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "Upload-if-absent is not atomic.** [`apps/web/scripts/upload-vendor-assets.ts:51`](https://github.com/Q9Labs/chalk/blob/0432c9017ddfcc9432905"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-368-r10/verdict.md",
+  "pr": 368,
+  "round": 10,
+  "sev": "P2",
+  "category": "gate_or_tooling",
+  "catcher": "builder",
+  "blocker_new_rubric": false,
+  "quote": "The default focused suite fails on Instabox.** [`apps/web/scripts/sync-public-assets.ts:43`](https://github.com/Q9Labs/chalk/blob/0432c9017d"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-368-r10/verdict.md",
+  "pr": 368,
+  "round": 10,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "judge",
+  "blocker_new_rubric": true,
+  "quote": "Non-digest paths receive immutable caching.** [`apps/web/public/_headers:8`](https://github.com/Q9Labs/chalk/blob/0432c9017ddfcc94329052be20"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-464-r2/verdict.md",
+  "pr": 464,
+  "round": 2,
+  "sev": "P2",
+  "category": "other",
+  "catcher": "static",
+  "blocker_new_rubric": false,
+  "quote": "`sdks/typescript/client/src/space-client/errors.ts:61`: required CI is red.** [Root checks](https://github.com/Q9Labs/chalk/actions/runs/399"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-388-r3/verdict.md",
+  "pr": 388,
+  "round": 3,
+  "sev": "P1",
+  "category": "env_blocked",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "Browser verification blocked**, [SpacePage.tsx:301](https://github.com/Q9Labs/chalk/blob/f4d44987dcae05ce378764aaac60cb41719e1ed6/apps/web/s"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-388-r3/verdict.md",
+  "pr": 388,
+  "round": 3,
+  "sev": "P1",
+  "category": "ci_pending",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "CI incomplete**, [gate.yml:1](https://github.com/Q9Labs/chalk/blob/f4d44987dcae05ce378764aaac60cb41719e1ed6/.github/workflows/gate.yml#L1). "
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-464-r3/verdict.md",
+  "pr": 464,
+  "round": 3,
+  "sev": "P2",
+  "category": "ci_pending",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "`/Users/macmini/code/chalk/.github/workflows/gate.yml:65`: required CI is not yet green.** [Root browser-tests](https://github.com/Q9Labs/ch"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-421-r2/verdict.md",
+  "pr": 421,
+  "round": 2,
+  "sev": "P2",
+  "category": "docs_or_copy",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "Compatibility wording understates who is affected.** [PR-body snapshot:48](/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/ju"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-421-r2/verdict.md",
+  "pr": 421,
+  "round": 2,
+  "sev": "P2",
+  "category": "ci_pending",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "Exact-head CI is not green yet.** Location: PR checks, no source file/line. At **2026-10-22 22:05:45 UTC**, [packed-browser checks](https://"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-421-r2/verdict.md",
+  "pr": 421,
+  "round": 2,
+  "sev": "P2",
+  "category": "ci_pending",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "Codex clean result is stale.** Location: [Codex review summary](https://github.com/Q9Labs/chalk/pull/421#issuecomment-6348393165), no source"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-428-r1/verdict.md",
+  "pr": 428,
+  "round": 1,
+  "sev": "P2",
+  "category": "data_integrity",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "A failed later save resends an access change already awaiting its receipt.** File: `sdks/typescript/client/src/whiteboard/v1-client.ts:821` "
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-428-r1/verdict.md",
+  "pr": 428,
+  "round": 1,
+  "sev": "P2",
+  "category": "other",
+  "catcher": "static",
+  "blocker_new_rubric": false,
+  "quote": "Required CI is red on this exact head.** File: `sdks/typescript/client/src/whiteboard/v1-client-recovery.test.ts:731` and `:766`, with addit"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-372-r1/verdict.md",
+  "pr": 372,
+  "round": 1,
+  "sev": null,
+  "category": "env_blocked",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "Verification blocker — ungraded:** [handoff.md:6](/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/mobile-board-r2/handoff.md:"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-479-r1/verdict.md",
+  "pr": 479,
+  "round": 1,
+  "sev": "P2",
+  "category": "data_integrity",
+  "catcher": "judge",
+  "blocker_new_rubric": true,
+  "quote": "Uncertain HTTP 5xx mutations are replayed on the same session.** [service.go:190](https://github.com/Q9Labs/chalk/blob/ebcf47cd79fc0eee98f63"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-479-r1/verdict.md",
+  "pr": 479,
+  "round": 1,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "judge",
+  "blocker_new_rubric": true,
+  "quote": "Durable stop does not prevent the next media retry.** [service.go:140](https://github.com/Q9Labs/chalk/blob/ebcf47cd79fc0eee98f63f217328e665"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-461-r4/verdict.md",
+  "pr": 461,
+  "round": 4,
+  "sev": "P2",
+  "category": "release_metadata",
+  "catcher": "static",
+  "blocker_new_rubric": false,
+  "quote": "The client still adds public API, so keep its minor changeset.** [.changeset/follow-view-owner.md:2](https://github.com/Q9Labs/chalk/blob/58"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-400-r2/verdict.md",
+  "pr": 400,
+  "round": 2,
+  "sev": "P1",
+  "category": "behaviour",
+  "catcher": "judge",
+  "blocker_new_rubric": true,
+  "quote": "Transport deduplication breaks Follow through a relay\n\n**File:line:** `sdks/typescript/client/src/whiteboard/v1-client.ts:890–891`.\n\n**Evide"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-400-r2/verdict.md",
+  "pr": 400,
+  "round": 2,
+  "sev": "P1",
+  "category": "data_integrity",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "Reloads escape retirement by becoming a different origin\n\n**File:line:** `sdks/typescript/client/src/whiteboard/v1-client.ts:92`; `sdks/type"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-400-r2/verdict.md",
+  "pr": 400,
+  "round": 2,
+  "sev": "P2",
+  "category": "data_integrity",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "Database rewind can suppress live views without a time limit\n\n**File:line:** `apps/sync/lib/chalk_sync/whiteboard_v1/postgres_repository.ex:"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-400-r2/verdict.md",
+  "pr": 400,
+  "round": 2,
+  "sev": "P2",
+  "category": "data_integrity",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "An active origin can lose its retirement fence\n\n**File:line:** `sdks/typescript/client/src/whiteboard/view-versions.ts:40`.\n\n**Evidence:** e"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-400-r2/verdict.md",
+  "pr": 400,
+  "round": 2,
+  "sev": "P2",
+  "category": "test_gap",
+  "catcher": "builder",
+  "blocker_new_rubric": false,
+  "quote": "Two checked-in retirement tests fail on the exact head\n\n**File:line:** `sdks/typescript/react/src/components/board/board-view-versions.test."
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-400-r2/verdict.md",
+  "pr": 400,
+  "round": 2,
+  "sev": "P2",
+  "category": "spec_mismatch",
+  "catcher": "builder",
+  "blocker_new_rubric": false,
+  "quote": "Origin-proof rejection has no diagnostic evidence\n\n**File:line:** `apps/sync/lib/chalk_sync/transport/socket_whiteboard_v1.ex:752`, with the"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-420-r3/verdict.md",
+  "pr": 420,
+  "round": 3,
+  "sev": "P2",
+  "category": "ci_pending",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "Release-readiness gate remains unmet.** [`.github/workflows/gate.yml:33`](https://github.com/Q9Labs/chalk/blob/f8511aec63185cc7552b9ce1101dc"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r14/verdict.md",
+  "pr": 348,
+  "round": 14,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "judge",
+  "blocker_new_rubric": true,
+  "quote": "expired guest actions remain available.** The live guest passes report callbacks without `reportUnavailableReason`; expiry disables the pare"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r14/verdict.md",
+  "pr": 348,
+  "round": 14,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "builder",
+  "blocker_new_rubric": true,
+  "quote": "focus restoration targets a removed button.** The callback captures the active report-menu button; SpaceHeader closes its popover, then Call"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r14/verdict.md",
+  "pr": 348,
+  "round": 14,
+  "sev": "P2",
+  "category": "data_integrity",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "terminal failure diagnostics are overwritten.** The provided diagnostic text is treated only as an opt-in flag, then rebuilt from the cleane"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-358-r3/verdict.md",
+  "pr": 358,
+  "round": 3,
+  "sev": "P1",
+  "category": "behaviour",
+  "catcher": "judge",
+  "blocker_new_rubric": true,
+  "quote": "New clients cannot enter old Sync.** [sdks/typescript/client/src/sync/v1-client.ts:393](https://github.com/Q9Labs/chalk/blob/6d0a343438f62a5"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-358-r3/verdict.md",
+  "pr": 358,
+  "round": 3,
+  "sev": "P2",
+  "category": "release_metadata",
+  "catcher": "static",
+  "blocker_new_rubric": false,
+  "quote": "No changeset covers this PR's published client change.** [sdks/typescript/client/src/sync/v1-client.ts:193](https://github.com/Q9Labs/chalk/"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-426-r2/verdict.md",
+  "pr": 426,
+  "round": 2,
+  "sev": "P1",
+  "category": "security_privacy",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "Restarting a poller renews access without a successful read.** [authority/poller.ex:38](https://github.com/Q9Labs/chalk/blob/43d4fa7f9d6a6d1"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-426-r2/verdict.md",
+  "pr": 426,
+  "round": 2,
+  "sev": "P2",
+  "category": "performance",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "Successful slow reads exceed the accepted poll-plus-one-read bound.** [authority/poller.ex:77](https://github.com/Q9Labs/chalk/blob/43d4fa7f"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-426-r2/verdict.md",
+  "pr": 426,
+  "round": 2,
+  "sev": "P2",
+  "category": "performance",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "`timeout: 1_000` is not a one-second read deadline.** [postgres_repository.ex:210](https://github.com/Q9Labs/chalk/blob/43d4fa7f9d6a6d12d292"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-426-r2/verdict.md",
+  "pr": 426,
+  "round": 2,
+  "sev": "P2",
+  "category": "data_integrity",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "Authority restart loses surviving pollers' cleanup monitors.** [authority.ex:46](https://github.com/Q9Labs/chalk/blob/43d4fa7f9d6a6d12d2928e"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-426-r2/verdict.md",
+  "pr": 426,
+  "round": 2,
+  "sev": "P2",
+  "category": "other",
+  "catcher": "static",
+  "blocker_new_rubric": false,
+  "quote": "Required Sync CI is red.** [authority.ex:65](https://github.com/Q9Labs/chalk/blob/43d4fa7f9d6a6d12d2928e6605e045a9205ea464/apps/sync/lib/cha"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-384-r12/verdict.md",
+  "pr": 384,
+  "round": 12,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "Completed transcripts beyond row 25 remain hidden.** [engine.ts:97](https://github.com/Q9Labs/chalk/blob/991a3bd5afc19d044807c7acbe249416f39"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-384-r12/verdict.md",
+  "pr": 384,
+  "round": 12,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "judge",
+  "blocker_new_rubric": true,
+  "quote": "A later page failure discards earlier successful rows.** [engine.ts:98](https://github.com/Q9Labs/chalk/blob/991a3bd5afc19d044807c7acbe24941"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-384-r12/verdict.md",
+  "pr": 384,
+  "round": 12,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "builder",
+  "blocker_new_rubric": true,
+  "quote": "Terminal list failures replace the entire Call overview.** [CallPage.tsx:93](https://github.com/Q9Labs/chalk/blob/991a3bd5afc19d044807c7acbe"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-384-r12/verdict.md",
+  "pr": 384,
+  "round": 12,
+  "sev": "P2",
+  "category": "performance",
+  "catcher": "builder",
+  "blocker_new_rubric": false,
+  "quote": "Call overview loses its request bound.** [call.ts:53](https://github.com/Q9Labs/chalk/blob/991a3bd5afc19d044807c7acbe249416f393a721/apps/web"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-384-r12/verdict.md",
+  "pr": 384,
+  "round": 12,
+  "sev": "P3",
+  "category": "performance",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "Repeated cursors fetch duplicate pages.** [engine.ts:100](https://github.com/Q9Labs/chalk/blob/991a3bd5afc19d044807c7acbe249416f393a721/apps"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-384-r12/verdict.md",
+  "pr": 384,
+  "round": 12,
+  "sev": "P1",
+  "category": "ci_pending",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "Release conditions are unmet.** [.github/workflows/gate.yml:182](https://github.com/Q9Labs/chalk/blob/991a3bd5afc19d044807c7acbe249416f393a7"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-396-r8/verdict.md",
+  "pr": 396,
+  "round": 8,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "Stale call height mounts a folded caller resource.** [ToastStack.tsx:121](https://github.com/Q9Labs/chalk/blob/9cb5bc006f05884274c43653d9187"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-396-r8/verdict.md",
+  "pr": 396,
+  "round": 8,
+  "sev": "P3",
+  "category": "other",
+  "catcher": "static",
+  "blocker_new_rubric": false,
+  "quote": "Committed debug probes remain.** [judge-r7-followup.test.tsx:39](https://github.com/Q9Labs/chalk/blob/9cb5bc006f05884274c43653d9187d038a6a4f"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-384-r2/verdict.md",
+  "pr": 384,
+  "round": 2,
+  "sev": "P1",
+  "category": "ci_pending",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "Exact-head CI is unfinished.** [gate.yml:64](https://github.com/Q9Labs/chalk/blob/899be037aa567c2da7d214c1fc5f80acf8ad28ec/.github/workflows"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-384-r2/verdict.md",
+  "pr": 384,
+  "round": 2,
+  "sev": "P2",
+  "category": "test_gap",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "The stale-Deny assertion can pass despite resurrecting Deny.** [refresh-checks.mjs:292–297](https://github.com/Q9Labs/chalk/blob/899be037aa5"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-358-r5/verdict.md",
+  "pr": 358,
+  "round": 5,
+  "sev": "P2",
+  "category": "env_blocked",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "Required verification remains incomplete.** `apps/sync/test/chalk_sync/lifecycle_consumer_postgres_test.exs:179`. M4 SSH authenticated and a"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-426-r4/verdict.md",
+  "pr": 426,
+  "round": 4,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "Hello succeeds while Authority is unavailable.** `/Users/macmini/code/chalk/apps/sync/lib/chalk_sync/whiteboard_v1/authority/poller.ex:20`. "
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-368-r4/verdict.md",
+  "pr": 368,
+  "round": 4,
+  "sev": "P3",
+  "category": "docs_or_copy",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "Disclose package-wide cache invalidation.** `/Users/macmini/code/chalk/apps/web/docs/runtime-assets.md:21` and [PR body snapshot:90](/Users/"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-426-r3/verdict.md",
+  "pr": 426,
+  "round": 3,
+  "sev": "P2",
+  "category": "env_blocked",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "Required independent verification is blocked** — `/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-426-r3/prompt.md:24`."
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-428-r4/verdict.md",
+  "pr": 428,
+  "round": 4,
+  "sev": null,
+  "category": "ci_pending",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "required ship evidence incomplete.** **File:line:** N/A (external checks). Checked last at **12:21 UTC, October 23**: [Root call-leaks](http"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r11/verdict.md",
+  "pr": 348,
+  "round": 11,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "judge",
+  "blocker_new_rubric": true,
+  "quote": "Disabled availability never recovers in a mounted call.** `apps/web/src/lib/problem-reports.ts:41`. A successful `{available:false}` respons"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-423-r3/verdict.md",
+  "pr": 423,
+  "round": 3,
+  "sev": "P2",
+  "category": "docs_or_copy",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "The recovery assertion and gate marker are not honest.** [apps/api/db/migrations/20261022230000_space_activity_recent_participants_index.sql"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-423-r3/verdict.md",
+  "pr": 423,
+  "round": 3,
+  "sev": null,
+  "category": "env_blocked",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "Blocking verification gap — Required PostgreSQL proofs could not run.** [Migration:10–14](https://github.com/Q9Labs/chalk/blob/5b28bbff16fdd"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-406-r3/verdict.md",
+  "pr": 406,
+  "round": 3,
+  "sev": "P1",
+  "category": "other",
+  "catcher": "static",
+  "blocker_new_rubric": true,
+  "quote": "Public callback compatibility breaks.** [control-bar-behavior.ts:108](https://github.com/Q9Labs/chalk/blob/088309e1fce5d5e5012725cb8de10e19a"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-406-r3/verdict.md",
+  "pr": 406,
+  "round": 3,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "judge",
+  "blocker_new_rubric": true,
+  "quote": "Camera Off failures get incorrect start advice.** [command-failure.ts:23](https://github.com/Q9Labs/chalk/blob/088309e1fce5d5e5012725cb8de10"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-406-r3/verdict.md",
+  "pr": 406,
+  "round": 3,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "builder",
+  "blocker_new_rubric": true,
+  "quote": "Unsupported speaker selection gets futile retry advice.** [command-failure.ts:25](https://github.com/Q9Labs/chalk/blob/088309e1fce5d5e501272"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-370-r9/verdict.md",
+  "pr": 370,
+  "round": 9,
+  "sev": "P2",
+  "category": "gate_or_tooling",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "Stale simulator receipts can shut down a new owner's device.** [scripts/gates/remote-queue.py:262](https://github.com/Q9Labs/chalk/blob/7897"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-420-r9/verdict.md",
+  "pr": 420,
+  "round": 9,
+  "sev": "P2",
+  "category": "ci_pending",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "Release gates unfinished — [.github/workflows/sdk-web-consumer-e2e.yml:37](/Users/macmini/code/chalk/.github/workflows/sdk-web-consumer-e2e."
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r10/verdict.md",
+  "pr": 348,
+  "round": 10,
+  "sev": "P1",
+  "category": "spec_mismatch",
+  "catcher": "builder",
+  "blocker_new_rubric": false,
+  "quote": "Limiter outages return 503 without the required log or metric.** [apps/api/internal/httpapi/rate_limit.go:252](https://github.com/Q9Labs/cha"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-348-r10/verdict.md",
+  "pr": 348,
+  "round": 10,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "builder",
+  "blocker_new_rubric": false,
+  "quote": "Valid long public display names become 500s.** [apps/api/internal/spaces/service.go:336](https://github.com/Q9Labs/chalk/blob/3b0738ada209f4"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-384-r4/verdict.md",
+  "pr": 384,
+  "round": 4,
+  "sev": "P1",
+  "category": "ci_pending",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "Exact-head CI is not green.** [.github/workflows/gate.yml:175](https://github.com/Q9Labs/chalk/blob/ab2d9de94bad9b2f7caf9a15e6edccce20768e05"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-384-r4/verdict.md",
+  "pr": 384,
+  "round": 4,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "builder",
+  "blocker_new_rubric": true,
+  "quote": "Transcription preparation `none` still offers an action the API refuses.** [apps/web/src/components/dashboard/PastSessionPage.tsx:283](https"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-384-r4/verdict.md",
+  "pr": 384,
+  "round": 4,
+  "sev": "P2",
+  "category": "behaviour",
+  "catcher": "judge",
+  "blocker_new_rubric": true,
+  "quote": "Source expiry leaves an unusable Prepare action visible.** [apps/web/src/components/dashboard/PastSessionPage.tsx:33](https://github.com/Q9L"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-358-r11/verdict.md",
+  "pr": 358,
+  "round": 11,
+  "sev": "P2",
+  "category": "data_integrity",
+  "catcher": "judge",
+  "blocker_new_rubric": true,
+  "quote": "An old-node join permanently strands a pending seat.** [apps/sync/lib/chalk_sync/stateholder/postgres/join_seats.ex:257](https://github.com/"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-358-r11/verdict.md",
+  "pr": 358,
+  "round": 11,
+  "sev": "P2",
+  "category": "data_integrity",
+  "catcher": "judge",
+  "blocker_new_rubric": true,
+  "quote": "Old Sync writers bypass the new entry fences during rollout.** [apps/api/db/migrations/20261023190000_participant_join_seats.sql:2](https://"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-459-r2/verdict.md",
+  "pr": 459,
+  "round": 2,
+  "sev": "P2",
+  "category": "ci_pending",
+  "catcher": "wait",
+  "blocker_new_rubric": false,
+  "quote": "Required CI still pending — [.github/workflows/gate.yml:70](https://github.com/Q9Labs/chalk/blob/76fb796f380f13415ceb5eb735856a9e6faea053/.g"
+ },
+ {
+  "file": "/Users/macmini/code/chalk/scratchpad/chalk-converge-2026-10-21/judge-465-r1/verdict.md",
+  "pr": 465,
+  "round": 1,
+  "sev": "P2",
+  "category": "gate_or_tooling",
+  "catcher": "judge",
+  "blocker_new_rubric": false,
+  "quote": "Cleanup can erase the original test failure.** File: `/Users/macmini/code/chalk/scripts/web-proof/guest.mjs:21–25` ([exact-head source](http"
+ }
+]

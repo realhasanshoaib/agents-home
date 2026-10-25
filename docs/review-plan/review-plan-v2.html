@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How a PR gets checked: the plan now</title>
+<style>
+:root{--bg:var(--background,#f6f4ee);--fg:var(--foreground,#1f2330);--muted:var(--muted-foreground,#6b7080);--green:var(--success,#0e9f8e);--amber:var(--warning,#d4880f);--grey:var(--muted-foreground,#8a8f9c)}
+html,body{margin:0;padding:0}
+svg{display:block;width:100%;height:auto}
+text{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-size:13px;fill:var(--fg,#1f2330)}
+.title{font-size:22px;font-weight:700}
+.h1{font-size:15px;font-weight:700}
+.sub{font-size:12px;fill:var(--muted,#6b7080)}
+.small{font-size:12px}
+.lbl{font-size:12px;font-weight:700}
+.mid{text-anchor:middle}
+.num{font-size:12px;font-weight:700;text-anchor:middle;dominant-baseline:central}
+.teal{fill:var(--green,#0e9f8e)}
+.on{fill:var(--bg,#f6f4ee);font-size:12px;font-weight:700;text-anchor:middle}
+.box{fill:var(--card,#fbfaf6);stroke:var(--border,#dcd8cd);stroke-width:1}
+.box-strong{fill:var(--card,#fbfaf6);stroke:var(--fg,#1f2330);stroke-width:1.2}
+.n-green{fill:var(--green,#0e9f8e);fill-opacity:.12;stroke:var(--green,#0e9f8e);stroke-width:1.4}
+.n-amber{fill:var(--amber,#d4880f);fill-opacity:.14;stroke:var(--amber,#d4880f);stroke-width:1.4}
+.n-grey{fill:var(--card,#fbfaf6);stroke:var(--grey,#8a8f9c);stroke-width:1.4;stroke-dasharray:6 5}
+.chip-green{fill:var(--green,#0e9f8e);stroke:none}
+.ln{fill:none;stroke:var(--fg,#1f2330);stroke-width:1.4}
+.ln-g{fill:none;stroke:var(--grey,#8a8f9c);stroke-width:1.4;stroke-dasharray:6 5}
+.ring{fill:var(--card,#fbfaf6);stroke:var(--fg,#1f2330);stroke-width:1.4}
+.ring-g{fill:var(--card,#fbfaf6);stroke:var(--grey,#8a8f9c);stroke-width:1.4}
+.mk{fill:var(--fg,#1f2330)}
+.mk-g{fill:var(--grey,#8a8f9c)}
+</style>
+</head>
+<body>
+<svg viewBox="0 0 728 1510" role="img" aria-label="How a PR gets checked: the plan now">
+<defs>
+<marker id="mD" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path class="mk" d="M0,1 L10,5 L0,9 Z"/></marker>
+<marker id="mG" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path class="mk-g" d="M0,1 L10,5 L0,9 Z"/></marker>
+</defs>
+
+<!-- Title and legend -->
+<text class="title" x="24" y="36">How a PR gets checked: the plan now</text>
+<rect class="n-green" x="24" y="52" width="130" height="26" rx="13"/>
+<text class="small mid" x="89" y="69">In place now</text>
+<rect class="n-amber" x="166" y="52" width="250" height="26" rx="13"/>
+<text class="small mid" x="291" y="69">Proposed, waits for Hasan's yes</text>
+<rect class="n-grey" x="428" y="52" width="276" height="26" rx="13"/>
+<text class="small mid" x="566" y="69">Only if two weeks of data says so</text>
+
+<!-- A: builder -->
+<rect class="n-green" x="24" y="108" width="680" height="68" rx="12"/>
+<text class="h1" x="44" y="130">Builder builds</text>
+<text class="sub" x="44" y="148">A Sol 6.1 lane writes the change. Before it opens the PR, it checks</text>
+<text class="sub" x="44" y="164">its own diff against code-review.md.</text>
+
+<!-- arrow 1: A to B -->
+<path class="ln" d="M364,176 V208" marker-end="url(#mD)"/>
+<circle class="ring" cx="364" cy="187" r="9"/>
+<text class="num" x="364" y="187">1</text>
+
+<!-- B: automatic checks band -->
+<rect class="box" x="24" y="208" width="680" height="176" rx="14"/>
+<text class="h1" x="44" y="232">Automatic checks, no model</text>
+<rect class="n-green" x="44" y="246" width="420" height="30" rx="8"/>
+<text class="small" x="56" y="265">Gate on every PR: Root, API, Sync.</text>
+<rect class="n-amber" x="44" y="284" width="420" height="44" rx="8"/>
+<text class="small" x="56" y="301">Changeset present: a CI check, so no judge ever raises it.</text>
+<text class="small" x="56" y="317">Needs a change to Chalk's gate.</text>
+<rect class="n-amber" x="44" y="336" width="420" height="30" rx="8"/>
+<text class="small" x="56" y="355">Performance budget (Chalk). Re-measure on Instabox first.</text>
+<rect class="n-green" x="484" y="246" width="200" height="62" rx="8"/>
+<text class="small" x="496" y="264">CI queued or running: wait.</text>
+<text class="small" x="496" y="279">Nobody is called and nothing</text>
+<text class="small" x="496" y="294">is marked FIX.</text>
+<rect class="box" x="484" y="320" width="200" height="48" rx="8"/>
+<text class="small" x="496" y="338">CI red: the builder fixes the</text>
+<text class="small" x="496" y="353">code defect.</text>
+
+<!-- arrow 2: B to C -->
+<path class="ln" d="M364,384 V420" marker-end="url(#mD)"/>
+<circle class="ring" cx="364" cy="399" r="9"/>
+<text class="num" x="364" y="399">2</text>
+<text class="small" x="380" y="403">CI green</text>
+
+<!-- C: high risk? -->
+<rect class="box-strong" x="244" y="420" width="240" height="96" rx="16"/>
+<text class="h1 mid" x="364" y="446">High risk?</text>
+<text class="sub mid" x="364" y="466">Data loss, security, auth,</text>
+<text class="sub mid" x="364" y="481">money, the recorder, anything</text>
+<text class="sub mid" x="364" y="496">that deploys.</text>
+
+<!-- arrow 3: C to D (yes) -->
+<path class="ln" d="M244,468 H184 V556" marker-end="url(#mD)"/>
+<circle class="ring" cx="214" cy="468" r="9"/>
+<text class="num" x="214" y="468">3</text>
+<text class="small mid" x="214" y="452">yes</text>
+
+<!-- arrow 4: C to E (no) -->
+<path class="ln" d="M484,468 H544 V556" marker-end="url(#mD)"/>
+<circle class="ring" cx="514" cy="468" r="9"/>
+<text class="num" x="514" y="468">4</text>
+<text class="small mid" x="514" y="452">no</text>
+
+<!-- D: judge (high risk) -->
+<rect class="n-green" x="24" y="556" width="320" height="224" rx="14"/>
+<text class="h1" x="44" y="580">One fresh Sol xhigh judge</text>
+<text class="sub" x="44" y="600">Looks for four things:</text>
+<text class="sub" x="44" y="615">wrong behaviour a user sees, data loss,</text>
+<text class="sub" x="44" y="630">a security hole, a broken build.</text>
+<text class="sub" x="44" y="645">A finding needs file:line and a</text>
+<text class="sub" x="44" y="660">reproduction. Anything else is a note.</text>
+<rect class="chip-green" x="44" y="676" width="120" height="24" rx="12"/>
+<text class="on" x="104" y="692">SHIP: merge.</text>
+<text class="small" x="44" y="722"><tspan class="lbl">FIX:</tspan> a fix lane adds one test per</text>
+<text class="small" x="44" y="737">blocker. The re-review checks only</text>
+<text class="small" x="44" y="752">the fix diff. Repeat until SHIP.</text>
+
+<!-- arrow 5: D to F (SHIP) -->
+<path class="ln" d="M184,780 V880 H320 V900" marker-end="url(#mD)"/>
+<circle class="ring" cx="184" cy="830" r="9"/>
+<text class="num" x="184" y="830">5</text>
+<text class="small teal" x="200" y="834">SHIP</text>
+
+<!-- FIX loop: unnumbered return arrow into D -->
+<path class="ln" d="M290,780 V806 H250 V780" marker-end="url(#mD)"/>
+<text class="lbl" x="298" y="800">FIX</text>
+
+<!-- E: no pre-merge judge (no high risk) -->
+<rect class="n-amber" x="384" y="556" width="320" height="76" rx="14"/>
+<text class="h1" x="404" y="580">No pre-merge judge</text>
+<text class="sub" x="404" y="600">Merge when CI is green. Today these PRs</text>
+<text class="sub" x="404" y="615">get one judge round.</text>
+
+<!-- arrow 6: E to F -->
+<path class="ln" d="M544,632 V870 H428 V900" marker-end="url(#mD)"/>
+<circle class="ring" cx="544" cy="760" r="9"/>
+<text class="num" x="544" y="760">6</text>
+
+<!-- F: merge -->
+<rect class="n-green" x="264" y="900" width="200" height="44" rx="12"/>
+<text class="h1 mid" x="364" y="927">Merge to master</text>
+
+<!-- arrow 7: F to G -->
+<path class="ln" d="M264,922 H136 V990" marker-end="url(#mD)"/>
+<circle class="ring" cx="200" cy="922" r="9"/>
+<text class="num" x="200" y="922">7</text>
+
+<!-- G: daily deep pass -->
+<rect class="n-amber" x="24" y="990" width="240" height="140" rx="14"/>
+<text class="h1" x="40" y="1014">Daily deep pass, advisory</text>
+<text class="sub" x="40" y="1034">One lane reads everything</text>
+<text class="sub" x="40" y="1049">merged that day: edge cases,</text>
+<text class="sub" x="40" y="1064">fragile code, performance,</text>
+<text class="sub" x="40" y="1079">even when no user feels it.</text>
+<text class="sub" x="40" y="1098">Runs on the Kaadr Codex</text>
+<text class="sub" x="40" y="1113">account. Blocks nothing.</text>
+
+<!-- arrow 8: G to H -->
+<path class="ln" d="M136,1130 V1260" marker-end="url(#mD)"/>
+<circle class="ring" cx="136" cy="1195" r="9"/>
+<text class="num" x="136" y="1195">8</text>
+
+<!-- H: backlog -->
+<rect class="n-amber" x="24" y="1260" width="224" height="76" rx="14"/>
+<text class="h1" x="40" y="1284">Backlog</text>
+<text class="sub" x="40" y="1302">Findings become fix PRs.</text>
+<text class="sub" x="40" y="1318">A severe find means roll back.</text>
+
+<!-- arrow 9: H back up to A, along the right edge -->
+<path class="ln" d="M248,1298 H716 V142 H704" marker-end="url(#mD)"/>
+<circle class="ring" cx="716" cy="700" r="9"/>
+<text class="num" x="716" y="700">9</text>
+<text class="small" x="700" y="704" text-anchor="end">fix PRs re-enter here</text>
+
+<!-- arrow 10: F to I (solid) -->
+<path class="ln" d="M364,944 V1150" marker-end="url(#mD)"/>
+<circle class="ring" cx="364" cy="1040" r="9"/>
+<text class="num" x="364" y="1040">10</text>
+
+<!-- arrow 11: F to J (dashed gate) -->
+<path class="ln-g" d="M464,922 H602 V1000" marker-end="url(#mG)"/>
+<circle class="ring-g" cx="533" cy="922" r="9"/>
+<text class="num" x="533" y="922">11</text>
+
+<!-- J: optional release gate -->
+<rect class="n-grey" x="500" y="1000" width="204" height="156" rx="14"/>
+<text class="h1" x="516" y="1022">Release gate,</text>
+<text class="sub" x="516" y="1038">only if needed</text>
+<text class="sub" x="516" y="1060">If after two weeks the</text>
+<text class="sub" x="516" y="1075">pass finds user-visible</text>
+<text class="sub" x="516" y="1090">defects in merged low-risk</text>
+<text class="sub" x="516" y="1105">PRs most weeks, release</text>
+<text class="sub" x="516" y="1120">only commits at or before</text>
+<text class="sub" x="516" y="1135">the last reviewed tag.</text>
+
+<!-- arrow 12: J to I (dashed gate) -->
+<path class="ln-g" d="M602,1156 V1190 H480" marker-end="url(#mG)"/>
+<circle class="ring-g" cx="541" cy="1190" r="9"/>
+<text class="num" x="541" y="1190">12</text>
+
+<!-- I: release -->
+<rect class="n-green" x="248" y="1150" width="232" height="80" rx="12"/>
+<text class="h1" x="264" y="1174">Release</text>
+<text class="sub" x="264" y="1192">a manual dispatch, as today</text>
+<text class="sub" x="264" y="1208">Not gated by the pass.</text>
+
+<!-- K: what we will measure -->
+<rect class="box" x="24" y="1380" width="680" height="104" rx="14"/>
+<text class="h1" x="44" y="1404">What we will measure</text>
+<text class="small" x="44" y="1426">PRs judged SHIP in round 1: 33% now (21 of 63).</text>
+<text class="small" x="44" y="1444">FIX verdicts that were only 'CI not finished': 25% now (45 of 182).</text>
+<text class="small" x="44" y="1462">Calls per merged PR.</text>
+</svg>
+</body>
+</html>
