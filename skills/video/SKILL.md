@@ -13,7 +13,7 @@ These rules come from the problems that kept coming back in our earlier videos. 
 2. **The voices.** Voices are ElevenLabs unless Hasan names another (`2password find elevenlabs --vault dev`). For each speaker, send him two or three voices reading the same script line, as audio files he can play, and use only the voice he picks. For Arabic, offer voices that sound local and say numbers in words.
 3. **A sample.** About 5 to 10 seconds in the final look, with the picked voice and the final format. When he says yes, make the rest the same way. When he rejects it, change the concept with him instead of polishing the one he didn't like.
 
-Two earlier videos show the bar Hasan accepted: the OnTime film, `/Users/macmini/code/ontime-journey-demo/OnTime x Q9 Labs - AI customer journey demo - Noor leads the call.mp4`, and the CollabEZ agents ad, built in `/Users/macmini/code/video-edits/collabez-agents-ad-2026-10/agent-for-that/`. Watch them to judge quality, then make each video for its own brief instead of copying their look or structure.
+Two earlier videos show how we have worked so far: the OnTime film, `/Users/macmini/code/ontime-journey-demo/OnTime x Q9 Labs - AI customer journey demo - Noor leads the call.mp4`, and the CollabEZ agents ad, built in `/Users/macmini/code/video-edits/collabez-agents-ad-2026-10/agent-for-that/`. Neither is the quality Hasan wants, so treat them as earlier attempts to improve on, never as a model to copy. The bar is the sample he approves.
 
 ## Making it
 
