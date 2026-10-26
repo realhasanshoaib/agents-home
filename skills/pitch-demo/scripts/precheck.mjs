@@ -4,12 +4,12 @@ import { createRequire } from 'node:module';
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 
-const usage = 'precheck.sh --deck <url> --email <path> [--max-slides N] [--ultravox-key <op:// ref>] [--out <dir>]';
+const usage = 'precheck.sh --deck <url> --email <path> [--max-slides N] [--demo <engine demo id>] [--out <dir>]';
 const args = {};
 for (let i = 2; i < process.argv.length; i += 2) {
   const name = process.argv[i];
   if (name === '--help') { console.log(usage); process.exit(0); }
-  if (!['--deck', '--email', '--max-slides', '--ultravox-key', '--out'].includes(name) || !process.argv[i + 1]) {
+  if (!['--deck', '--email', '--max-slides', '--demo', '--out'].includes(name) || !process.argv[i + 1]) {
     console.error(`FAIL arguments: ${usage}`); process.exit(1);
   }
   args[name.slice(2)] = process.argv[i + 1];
@@ -19,7 +19,7 @@ try { deck = new URL(args.deck); } catch { /* Report together with missing argum
 const limit = Number(args['max-slides'] ?? 6);
 if (!deck || !['http:', 'https:'].includes(deck.protocol) || !args.email ||
     !Number.isSafeInteger(limit) || limit < 1 ||
-    (args['ultravox-key'] && !args['ultravox-key'].startsWith('op://'))) {
+    (args.demo && !/^[a-z0-9-]+$/.test(args.demo))) {
   console.error(`FAIL arguments: ${usage} (default slide limit: 6)`); process.exit(1);
 }
 
@@ -56,25 +56,31 @@ const datedAsk = email.split(/\n\s*\n|(?<=[.!?])\s+/).some(part => datePattern.t
 check('email dated ask', datedAsk, 'ask and weekday/date in the same sentence or paragraph');
 scan('email', email);
 
-if (args['ultravox-key']) {
-  // The child is the only secret consumer; stdout is a non-secret account capacity.
-  const result = spawnSync('2password', ['run', '--env', `UVK=${args['ultravox-key']}`, '--', process.execPath, '--input-type=module', '-e', `
+const engine = 'https://agent.q9labs.ai';
+if (args.demo) {
+  let face = false;
+  try {
+    const r = await fetch(`${engine}/v1/demos/${args.demo}/ui`, { signal: AbortSignal.timeout(30000) });
+    face = r.ok && (await r.json()).avatar?.enabled === true;
+    check('engine demo config', r.ok, r.ok ? `${args.demo} found, face ${face ? 'on' : 'off'}` : `GET /ui returned ${r.status}`);
+  } catch { check('engine demo config', false, 'engine unreachable'); }
+  // The child is the only consumer of the admin key; stdout is the non-secret vendor status.
+  const result = spawnSync('2password', ['run', '--env', 'ADMIN=op://dev/Pitch Kit Engine Admin Key/credential', '--', process.execPath, '--input-type=module', '-e', `
     try {
-      const r = await fetch('https://api.ultravox.ai/api/accounts/me', {
-        headers: {'X-API-Key': process.env.UVK}, signal: AbortSignal.timeout(30000)
+      const r = await fetch('${engine}/v1/health', {
+        headers: {Authorization: 'Bearer ' + process.env.ADMIN}, signal: AbortSignal.timeout(60000)
       });
       if (!r.ok) process.exit(1);
-      const account = await r.json();
-      const n = account.allowedConcurrentCalls;
-      if (typeof n !== 'number' || !Number.isFinite(n)) process.exit(1);
-      console.log(n);
+      const h = await r.json();
+      console.log(JSON.stringify({ultravox: h.ultravox?.available === true, tavus: h.tavus?.available === true}));
     } catch { process.exit(1); }
-  `], { encoding: 'utf8', timeout: 90000 });
-  const capacity = Number(result.stdout?.trim());
-  check('Ultravox concurrency', result.status === 0 && result.stdout?.trim() !== '' && capacity > 0,
-    result.status === 0 && result.stdout?.trim() !== '' ? `allowedConcurrentCalls=${capacity}` : 'account request or credential resolution failed (secret output suppressed)');
+  `], { encoding: 'utf8', timeout: 120000 });
+  let health = null;
+  try { if (result.status === 0) health = JSON.parse(result.stdout.trim()); } catch { /* Reported below. */ }
+  check('Ultravox can start a call', health?.ultravox === true, health ? `ultravox available=${health.ultravox}` : 'health request or credential resolution failed (secret output suppressed)');
+  check('Tavus can start a face', !face || health?.tavus === true, face ? `tavus available=${health?.tavus}` : 'face off for this demo');
 } else {
-  check('Ultravox concurrency', true, 'not requested; no key supplied (no live call or credit/balance test)');
+  check('engine vendors', true, 'not requested; pass --demo <id> for an Ava demo (live call and face credit test)');
 }
 
 let browser;

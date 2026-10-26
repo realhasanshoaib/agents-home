@@ -1,36 +1,31 @@
 # The proposal deck
 
-The deck makes one argument, in the order the buyer decides: what changes for them, the proof, what is real and what is proposed, and the one next step. Its words come from the brief, so a builder lays them out and doesn't write new claims; a gap goes back to the lead. AVN's deck, `/Users/macmini/code/avn-shipping-demo/public/proposal/index.html`, is the shell to reuse (one look, full bleed, pictures with credits, the access key, print layout), not a running order.
+The deck makes one argument, in the order the buyer decides: what changes for them, the proof, what is real and what is proposed, and the one next step. Its words come from the brief, so a builder lays them out and doesn't write new claims; a gap goes back to the lead.
 
-## Slides
+## Start from a template
 
-These are the sections to choose from, in their usual order. The lead picks only those the buyer's next decision needs, within 6 slides for a cold prospect and 9 for a warm one. The first and last are always there.
+Never design a deck from a blank page. Copy the finished example closest to the case from `/Users/macmini/code/pitch-kit/decks/` and change its words and pictures:
 
-1. What changes for them, in one sentence.
-2. Their pain, in their words or our proof, with the source.
-3. The demo, opened at the hard moment from the brief.
-4. What works today and what we would build.
-5. A project that proves we can handle this buyer's specific risk.
-6. Scope and the time from signing to go-live.
-7. The offer.
-8. What we need from you, only once they've agreed to build.
-9. The next step.
+| Template | When | Slides |
+| --- | --- | --- |
+| `cold-voice-agent` | They haven't met us, and we show Ava on their own site. | at most 6 |
+| `warm-workflow` | We met them and built a concept of their workflow. | at most 9 |
+| `rfq-response` | We reply to a tender or a request for a quote. | as the RFQ needs |
 
-## Look
+Copy the example's folder to the demo repo's `public/proposal/` and `decks/kit/` to `public/kit/`, so its `../kit/` links keep working. Then follow `decks/README.md` there: it lists what to change, the eight slide layouts and the job each one does, and the text limits. Read the template's `NOTES.md` first, because it says why each slide exists and what changes for a new prospect. When the kit needs a fix or a new layout, make it in pitch-kit, so the next deck gets it too.
 
-- **One look.** Every slide uses one type family and Q9's paper and ink, with one accent colour. The prospect's brand shows in their logo, in the pair "<Prospect> × Q9 Labs" at the foot of every slide, and in screenshots of their rebuilt pages.
-- **Full bleed.** Each slide fills the window at any shape, with no bars above, below or beside it.
-- **A picture on every slide.** Each slide shows a real picture of what it names: a map for a place or a route, the logo of each company it names (from Svgl), a photo of their cargo, products or site, the icons of the channels it names, or the live product. Every screenshot shows the current product while it works, never a test screen or a marketing home page. Use only pictures we may reuse, and list each with its source and licence in `img/CREDITS.md`. Group things with spacing and soft filled panels. Hasan dislikes thin lines between rows and accent lines over columns.
-- **Confident words.** The deck states what we understood and what we built as fact. Doubts, unknowns and requests for correction go in the meeting notes, and the slide on what is real and what is proposed is where the limits show. The rebuilt pages carry the concept-demo footer, so the slides don't.
-- **Whole pictures.** Show every photo at its natural proportions, never cut to fill a fixed strip. On a phone, the first screen shows the promise before any photo.
+## Words
 
-## Demos on the slides
+The text limits in `decks/README.md` hold on every slide: a headline of at most 10 words, at most 30 words of body, a proof caption of at most 12 words, and at most 3 cards. Anything longer goes in the meeting notes. The deck states what we understood and what we built as fact. Doubts, unknowns and requests for correction go in the meeting notes, and the slide on what is real and what is proposed is where the limits show.
 
-Each demo plays on its slide and loads only when its slide comes up. Make the proof big enough to read at 390 px: show the moment that matters at full width, and keep frames for when the frame itself helps. Next to each demo, a labelled button such as "Open the live site" opens it alone, and one plain line says it is live and can be clicked. A small corner icon alone is too easy to miss. When the demo needs an access key, the deck reads it from its own link (`/proposal/?k=<key>`), keeps it in `localStorage`, and adds it to every demo button, so the prospect never meets a key prompt. Every picture of the product shows the current build.
+## Pictures and demos
+
+- Every picture is real and reusable, with its source and licence in `img/CREDITS.md`, and every screenshot shows the current product while it works, never a test screen or a marketing home page. Product text in a proof capture must be readable at 1440 px and at 390 px.
+- Each demo plays on its slide and loads only when its slide comes up, with a labelled button such as "Open the live site" next to it and one line saying it is live. The kit passes the access key from the deck's link to every button marked `data-demo`, so the prospect never meets a key prompt.
 
 ## Proof
 
-Show a past project only when it proves we can handle this buyer's specific risk, with a real screenshot and an outcome, and say whether it was a demo or is live. Edli (LMS-School), our main traction product, is the first candidate for a school. Name clients only as Q9 Brain Fact `q9-deck-client-naming` allows, and describe the rest by industry and country.
+Show a past project only when it proves we can handle this buyer's specific risk, with a real screenshot and an outcome, and say whether it was a demo or is live. Edli (LMS-School), our main traction product, is the first candidate for a school. Name clients only as the Q9 Brain's client-naming note allows (`get` with `{"id": "canon:facts/q9-deck-client-naming"}`), and describe the rest by industry and country.
 
 ## Commercials and the next step
 
@@ -39,4 +34,4 @@ Show a past project only when it proves we can handle this buyer's specific risk
 
 ## Before it goes
 
-The deck is unlisted, with `noindex`, a preview card, and a print layout so they can save it as a PDF. Done when the contact sheets from the pre-send check show every slide readable at 1440 × 900 and 390 px with every picture whole, the proof controls open the live demo without a key prompt, the print layout works, and one live call started from inside the deck on a phone has run. Check another window size only to chase a problem you've seen.
+Done when the contact sheets from the pre-send check show every slide readable at 1440 × 900 and 390 px with every picture whole, the proof buttons open the live demo without a key prompt, the print layout works, and one live call started from inside the deck on a phone has run. Check another window size only to chase a problem you've seen.
