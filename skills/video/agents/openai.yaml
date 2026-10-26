@@ -1,6 +1,6 @@
 interface:
   display_name: "Video"
-  short_description: "Rules for every Q9 video: script and sample approved first, ElevenLabs voices, clips made with their audio, checks before showing"
+  short_description: "Rules for every Q9 video: script, voices and sample approved first, ElevenLabs voices, clips made with their audio, checks before showing"
   default_prompt: "Use $video to make this video."
 policy:
   allow_implicit_invocation: true

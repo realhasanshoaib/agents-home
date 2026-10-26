@@ -7,14 +7,17 @@ description: Use when making, editing or reviewing any video for Q9 or its ventu
 
 These rules come from the problems that kept coming back in our earlier videos. A brief or Hasan's word overrides them.
 
-## Hasan approves two things before the build
+## Hasan approves three things before the build
 
 1. **The script.** Every spoken line, every on-screen word, the length and the aspect ratios. Speech runs at about 2.5 words a second, so a 30-second ad holds about 75 words, and the point lands in the first 5 seconds. Show it to Hasan and build nothing until he says yes.
-2. **A sample.** About 5 to 10 seconds in the final look, voice and format. When he says yes, make the rest the same way. When he rejects it, change the concept with him instead of polishing the one he didn't like.
+2. **The voices.** Voices are ElevenLabs unless Hasan names another (`2password find elevenlabs --vault dev`). For each speaker, send him two or three voices reading the same script line, as audio files he can play, and use only the voice he picks. For Arabic, offer voices that sound local and say numbers in words.
+3. **A sample.** About 5 to 10 seconds in the final look, with the picked voice and the final format. When he says yes, make the rest the same way. When he rejects it, change the concept with him instead of polishing the one he didn't like.
+
+Two earlier videos show the bar Hasan accepted: the OnTime film, `/Users/macmini/code/ontime-journey-demo/OnTime x Q9 Labs - AI customer journey demo - Noor leads the call.mp4`, and the CollabEZ agents ad, built in `/Users/macmini/code/video-edits/collabez-agents-ad-2026-10/agent-for-that/`. Watch them to judge quality, then make each video for its own brief instead of copying their look or structure.
 
 ## Making it
 
-- **Voices are ElevenLabs** unless Hasan names another (`2password find elevenlabs --vault dev`). Pick from samples, and for Arabic a voice that sounds local and says numbers in words. Write the project's names, brands and acronyms as they should sound, and redo a wrong line on its own with the lines before and after it as context.
+- **Say names right.** Write the project's names, brands and acronyms as they should sound, and redo a wrong line on its own with the lines before and after it as context.
 - **Generate speaking clips with their audio.** A person who talks on screen is generated talking, with that speech. Silent clips with a voice and lip sync added later never looked real.
 - **A face looks real or isn't there.** A frozen, off-sync or uncanny face loses the viewer, so show the product instead.
 - **Every claim comes from the brief or the Canon**: numbers, prices, dates and delivery promises, spoken or on screen. Ads show no prices unless the brief asks for them.
