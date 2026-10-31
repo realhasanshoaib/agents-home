@@ -1,6 +1,6 @@
 ---
 name: video
-description: Use when making, editing or reviewing any video for Q9 or its ventures, such as a pitch demo's journey video, an ad, a marketing or launch video, an explainer, or a reel.
+description: "Use only when Hasan asks for video, or to make, edit or review one."
 ---
 
 # Video

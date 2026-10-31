@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare the shared agent setup on the MacBook Air with the other machines, and push it to them.
+"""Compare the shared agent setup on the MacBook Air with the other machines and the Q9 Brain, and push it to them.
 
   sync.py           list what is out of sync, change nothing
   sync.py --apply   repair links here, push to the other machines, list what is still out of sync
@@ -23,31 +23,31 @@ MACHINES = ["agents-macmini"]
 # synced child by child, so a child that only another machine has is removed there.
 SHARED = [
     ".agents/skills/",
+    ".agents/tools/transcribe.go",
+    ".agents/tools/transcribe_test.go",
+    ".agents/tools/transcribe",
+    ".agents/docs/code-review.md",
     ".agents/docs/delegation.md",
-    ".codex/skills/pr",
+    ".codex/skills/file-pr",
     ".codex/AGENTS.md",
     ".codex/approvals.md",
-    ".codex/auto-code-review.md",
-    ".codex/global-code-standards.md",
+    ".codex/engineering-principles.md",
     ".codex/process-lifetime.md",
     ".codex/remote-testing.md",
     ".codex/shipping-public-tools.md",
     ".codex/tool-accounts.md",
     ".codex/writing-style.md",
     ".codex-account-2/AGENTS.md",
-    ".codex-account-2/auto-code-review.md",
     ".claude/skills/",
     ".claude/rules/",
     ".claude/hooks/",
     ".claude/CLAUDE.md",
-    ".claude/delegation.md",
     ".claude/keybindings.json",
     ".claude/shipping-public-tools.md",
     ".claude/statusline-command.sh",
     ".claude-kaadr/skills",
     ".claude-kaadr/rules",
     ".claude-kaadr/CLAUDE.md",
-    ".claude-kaadr/delegation.md",
     ".claude-kaadr/keybindings.json",
     ".claude-kaadr/settings.json",
     ".config/dcg/config.toml",
@@ -69,6 +69,12 @@ CONFIGS = [
 LOCAL_ONLY = {".DS_Store", "__pycache__", ".trash", "synced", ".system"}  # never compared or pushed
 BACKUPS = ".sync-harnesses-backups"
 HOME = Path.home()
+
+# Skills with agents/brain.json also live in the Q9 Brain's Kit, saved as Hasan through the server CLI.
+BRAIN_SAVE = ["ssh", "-o", "ConnectTimeout=20", "-l", "ubuntu", "q9-brain",
+              "sudo -n -u q9 env Q9_ACTOR=hasan /usr/local/libexec/q9-cli save"]
+BRAIN_BY = {"harness": "sync-harnesses", "model": "none", "effort": "none", "machine": "MacBook Air"}
+BRAIN_PUSHED = HOME / ".local/state/sync-harnesses/brain.json"  # what this Air last saved to the Brain
 
 
 def units() -> list[str]:
@@ -198,6 +204,55 @@ def install(stamp: str, rows: list[tuple[str, str]]) -> None:
     shutil.rmtree(run / "new", ignore_errors=True)
 
 
+def brain_skills() -> dict[str, dict]:
+    """The skill_set arguments of every skill that opts in to the Brain with agents/brain.json."""
+    skills = {}
+    for folder in sorted((HOME / ".agents/skills").iterdir()):
+        config = folder / "agents/brain.json"
+        if not config.is_file():
+            continue
+        _, front, body = (folder / "SKILL.md").read_text().split("---\n", 2)
+        fields = dict(line.split(":", 1) for line in front.splitlines() if ":" in line)
+        if fields["description"].strip()[:1] in (">", "|"):
+            raise SystemExit(f"{folder.name}: put its description on one line, because the Brain keeps one-line descriptions")
+        skills[folder.name] = {
+            "name": fields["name"].strip().strip("\"'"),
+            "description": fields["description"].strip().strip("\"'"),
+            "body": body.strip() + "\n",
+            "ventures": json.loads(config.read_text())["ventures"],
+        }
+    return skills
+
+
+def brain_pushed() -> dict[str, dict]:
+    return json.loads(BRAIN_PUSHED.read_text()) if BRAIN_PUSHED.is_file() else {}
+
+
+def brain_differences(skills: dict[str, dict], pushed: dict[str, dict]) -> list[tuple[str, str]]:
+    rows = [(name, "differs" if name in pushed else "missing") for name in skills if skills[name] != pushed.get(name)]
+    return rows + [(name, "extra") for name in pushed if name not in skills]
+
+
+def push_brain(skills: dict[str, dict], rows: list[tuple[str, str]]) -> str:
+    """Save the changed skills in one Batch; an extra one is deleted. Records only what the Brain accepted."""
+    pushed = brain_pushed()
+    writes = [{"op": "skill_set", "args": {**pushed[name], "deleted": True} if state == "extra" else skills[name]}
+              for name, state in rows]
+    payload = json.dumps({"by": BRAIN_BY, "label": "sync-harnesses", "writes": writes})
+    result = subprocess.run(BRAIN_SAVE, input=payload, capture_output=True, text=True)
+    if result.returncode:
+        names = ", ".join(name for name, _ in rows)
+        return f"the Brain refused the save of {names} (writes in that order): {(result.stderr or result.stdout).strip()[:300]}"
+    for name, state in rows:
+        if state == "extra":
+            del pushed[name]
+        else:
+            pushed[name] = skills[name]
+    BRAIN_PUSHED.parent.mkdir(parents=True, exist_ok=True)
+    BRAIN_PUSHED.write_text(json.dumps(pushed, indent=2))
+    return result.stdout.strip().splitlines()[0]
+
+
 def show(text: str) -> None:
     files = " ".join(CONFIGS)
     grep = f"cd ~ && grep -n -F -- {shlex.quote(text)} {files} 2>/dev/null"
@@ -242,12 +297,21 @@ def main() -> None:
             print(f"{host:<15} {unit:<44} {state}")
         pending += len(rows)
 
+    skills = brain_skills()
+    rows = brain_differences(skills, brain_pushed())
+    if apply and rows:
+        print(f"brain: {push_brain(skills, rows)}")
+        rows = brain_differences(skills, brain_pushed())
+    for name, state in rows:
+        print(f"{'brain':<15} {name:<44} {state}")
+    pending += len(rows)
+
     unlinked = sorted(set(os.listdir(HOME / ".agents/skills")) - set(os.listdir(HOME / ".claude/skills")) - LOCAL_ONLY)
     if unlinked:
         print("skills Claude does not have (no link in ~/.claude/skills): " + " ".join(unlinked))
     if pending:
         raise SystemExit(f"{pending} out of sync")
-    print(f"in sync: {len(here)} shared paths on air, {', '.join(MACHINES)}")
+    print(f"in sync: {len(here)} shared paths on air, {', '.join(MACHINES)}, {len(skills)} skills in the Q9 Brain")
 
 
 if __name__ == "__main__":

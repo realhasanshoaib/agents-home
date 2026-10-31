@@ -3,4 +3,4 @@ interface:
   short_description: "Build a live demo of our product inside a prospect's own site or app"
   default_prompt: "Use $pitch-demo to build an Ava demo for this company."
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

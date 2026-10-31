@@ -1,19 +1,41 @@
 # Delegation
 
-Delegate only concrete, bounded work that can progress independently. Good delegated tasks have a clear question or owned set of files, enough context to act, and a result the primary agent can verify.
+The lead owns coordination, decisions, and replies to Hasan.
 
-Honor an explicit choice of agent or model. Otherwise choose by the tools, repository context, latency, and task shape; ask only when the choice materially changes cost or quality.
+## Legwork goes to a lane
 
-Prompts must be self-contained because delegated agents may not see the parent conversation. State the goal, constraints, ownership, expected output, verification, and the fact that other agents may be editing the repository.
+Each lead call sends the whole thread again, and every command output stays in it for all later calls, so legwork done in the lead costs far more than the same work in a fresh lane. In the week that ran out the weekly Claude limit (16 to 21 Oct 2026), 62% of Opus lead calls were shell commands, command output made up three quarters of a long lead thread, and re-sending context was two thirds of all usage.
 
-Keep critical-path diagnosis, fixes, production changes, and final integration with the primary agent. Parallelize independent exploration and implementation, but do not assign two agents overlapping files without a deliberate coordination plan.
+Claude leads delegate legwork such as browser work, tests, reading, screenshot review, and data gathering. Codex follows its own delegation instructions.
 
-Treat delegated output as evidence, not truth. Inspect the result, reconcile it with current repository state, and run the relevant verification before relying on it.
+## Choosing a model
 
-## Continue related work
+Before each lane, name the hard part, and give the model, effort and the reason in one line. Then launch without reconfirming authorized work.
 
-When delegation is authorized, reuse the existing worker session for a narrow correction or continuation of the same task, preserving its model, workspace and decisions. Follow the orchestrator's lifecycle: T3 delegated review rounds require a new `delegate_task` call, not a message to their backing thread. Use a fresh judge for an independent review and fresh context for unrelated work or a completed phase whose history has become misleading. Carry a compact handoff at that boundary.
+| Work | Model |
+| --- | --- |
+| Mechanical legwork: finding, listing, bulk data pulls, running test and build commands to completion | GPT-6 Luna xhigh |
+| Computer or browser use on Hasan's machine: driving Helium or a native Mac app | GPT-6.1 Terra medium |
+| Diagnostic legwork: reading logs, traces and data to find a cause; legwork that needs Claude-side tools | Claude Haiku 5.5 high |
+| Implementation | Claude Sonnet 5.5 high |
+| A phase that demonstrably needs more reasoning | Claude Opus 5.5 high; escalate that phase only, then drop back |
+| Reviews and judges (see `code-review.md`) | GPT-6.1 Sol xhigh |
+| Imagegen | GPT-6.1 Sol high |
+| Testing on Windows, or on a clean macOS or Ubuntu machine | `devin-box` skill: Devin cloud on SWE-2, free until 22 Nov 2026 |
 
-Reuse useful context for continuity and possible lower allowance consumption, not because a thread guarantees a cache hit. Hasan uses included Codex subscription usage limits, not purchased Codex credits or API token billing. Assess efficiency from the subscription usage dashboard when measurable; API token prices and credit rates do not establish how much included allowance a task consumes. Keep stable instructions and tools stable. Check-ins monitor progress and liveness; do not send model turns only to warm a cache. Neither thread age nor saved history establishes cache retention.
+Builders run on Claude and reviewers on GPT, because the founders' ChatGPT plan is Pro 100 and building used about 70% of its Codex allowance. A reviewer from the other model family also catches mistakes the builder's family shares.
 
-Checked 23 October 2026: official [prompt-caching documentation](https://developers.openai.com/api/docs/guides/prompt-caching) describes finite, model-dependent API lifetimes; [Codex pricing](https://learn.chatgpt.com/docs/pricing) says credit prices alone do not determine included subscription usage. Infinite Codex cache retention and a specific allowance saving from thread reuse are not established by these sources. Recheck current official guidance before making a stronger claim.
+When he asks, name the lanes and subagents that are running and the model each one uses.
+
+- Use the Standard tier (`service_tier="default"`) unless asked.
+- When a lane stops with "Selected model is at capacity", send a new message in the same thread so it resumes where it stopped, on the same model.
+
+## Briefs
+
+Give the lane a clear task, the context and constraints it needs, and ownership when work could overlap. Don't copy inherited instructions or use a boilerplate contract.
+
+When Claude delegates to Codex, tell it to act as a worker for the lead: complete the assigned scope and report the result to the lead. Lead-thread collaboration and handoff instructions do not apply to the worker; keep project instructions and safety boundaries.
+
+## While lanes run
+
+Coordinate independent work, use the time productively, and check results before relying on them. A review must be independent when the review policy calls for one.

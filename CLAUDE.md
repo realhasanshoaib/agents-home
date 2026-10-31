@@ -16,7 +16,7 @@ Follow [`docs/delegation.md`](./docs/delegation.md). Keep critical diagnosis, fi
 
 ## Writing
 
-Follow [`docs/writing-style.md`](./docs/writing-style.md) for prose, reports, pull requests, and handoffs.
+Follow `~/.codex/writing-style.md` for prose, reports, pull requests, and handoffs. It is the single source of truth for Claude and Codex.
 
 ## Review
 

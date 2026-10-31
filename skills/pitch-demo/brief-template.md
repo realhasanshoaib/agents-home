@@ -51,7 +51,7 @@ Setup fee (paid in full on signing), monthly fee, what the monthly fee includes,
 
 ## The deck's words
 
-Slide by slide, in order, only the sections this buyer needs (see `deck.md`): the headline, the supporting lines, and the real picture it shows: a map, a logo, a photo, or the live product.
+Slide by slide, in order, only the sections this buyer needs (see `proposal.md`): the headline, the supporting lines, and the real picture it shows: a map, a logo, a photo, or the live product.
 
 ## The video plan (only when a video was asked for)
 

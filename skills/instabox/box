@@ -1,5 +1,5 @@
 #!/bin/bash
-# Runs a command on a fresh Instabox machine started from the q9-base snapshot,
+# Runs a command on a fresh Instabox machine started from the q9-base-20261030 snapshot,
 # in a checkout of the current repository's HEAD fetched from GitHub, then
 # deletes the machine.
 #
@@ -11,13 +11,13 @@
 # HEAD must be pushed. The checkout also has origin's default branch and every
 # --fetch branch as origin/<name>, 200 commits deep. The command itself can't
 # fetch, because the GitHub token is gone by the time it runs. Exits with the
-# command's exit code. The plan allows 1 machine, so a run waits for a free one.
+# command's exit code. The plan allows 5 machines, so a run waits when all are in use.
 #
 # runner gives each queued job labelled instabox in the current repository a
 # fresh machine with a single-job runner, deletes the machine after the job, and
 # stops once no job has been queued for --idle minutes (default 10).
 set -u
-snapshot=${BOX_SNAPSHOT:-q9-base}
+snapshot=${BOX_SNAPSHOT:-q9-base-20261030}
 
 usage() { sed -n '2,18p' "$0" >&2; exit 64; }
 
@@ -77,6 +77,18 @@ for m in json.load(sys.stdin):
   instabox rm "$stale" >/dev/null 2>&1 && echo "box: deleted $stale, left behind by a run that ended" >&2
 done
 
+# A machine that fails to delete keeps holding a slot while its box call is still
+# alive, which the sweep above can't see, so a failed delete is retried.
+remove() {
+  local tries
+  for tries in 1 2 3 4 5 6; do
+    instabox rm "$1" >/dev/null 2>&1 && return 0
+    sleep 20
+  done
+  echo "box: could not delete $1, remove it with: instabox rm $1" >&2
+  return 1
+}
+
 prefix=$(basename "$repo" | tr 'A-Z' 'a-z' | tr -c 'a-z0-9\n' '-' | cut -c1-20)
 start=$(date +%s)
 name=""
@@ -89,6 +101,11 @@ create() {
     # Instabox's API gateway sometimes answers 5xx or times out; that is not a refusal.
     if [[ $error == *"Bad Gateway"* || $error == *"Service Unavailable"* || $error == *"Gateway Time"* || $error == *"handshake timeout"* ]]; then
       sleep 30
+      continue
+    fi
+    # The free plan allows 3 starts a minute across every box on the account.
+    if [[ $error == *rate_limited* ]]; then
+      sleep 60
       continue
     fi
     [[ $error == *quota_exceeded* ]] || { echo "box: could not create $candidate: $error" >&2; exit 1; }
@@ -128,7 +145,7 @@ if [[ $mode == runner ]]; then
     local id
     id=$(gh api "repos/$slug/actions/runners" -q ".runners[] | select(.name == \"$name\") | .id" 2>/dev/null)
     [[ -n $id ]] && gh api -X DELETE "repos/$slug/actions/runners/$id" >/dev/null 2>&1
-    instabox rm "$name" >/dev/null 2>&1 || echo "box: could not delete $name, remove it with: instabox rm $name" >&2
+    remove "$name"
     name=""
   }
   trap cleanup EXIT
@@ -157,17 +174,22 @@ curl -fsSL https://github.com/actions/runner/releases/download/v$version/actions
 sudo ./bin/installdependencies.sh >/dev/null
 ./config.sh --unattended --ephemeral --url $(printf %q "https://github.com/$slug") --token "\$T" --name $name --labels instabox >/dev/null || exit 97
 unset T
-exec ./run.sh
+./run.sh
+status=\$?
+printf '%s\n' "\$status" > .box-runner-exit
+exit "\$status"
 EOF
     } | instabox ssh "$name" -- bash -l -s &
     runner=$!
     # The runner signs off after its job, but the ssh session can stall and
-    # never report that, so the sign-off ends the wait. A runner whose job was
-    # cancelled before it took one would wait forever, so that ends it too.
+    # never report that. Its exit marker also catches jobs that register and
+    # sign off between polls. A runner whose job was cancelled before it took
+    # one would wait forever, so that ends it too.
     seen=0
     idle_checks=0
     while kill -0 "$runner" 2>/dev/null; do
       sleep 30
+      instabox exec "$name" --timeout 10 -- 'test -f ~/runner/.box-runner-exit' >/dev/null 2>&1 && break
       state=$(runner_state)
       [[ $state == true || $state == false ]] && seen=1
       ((seen)) && [[ $state == gone ]] && break
@@ -187,7 +209,7 @@ EOF
 fi
 
 create
-((keep)) || trap 'instabox rm "$name" >/dev/null 2>&1 || echo "box: could not delete $name, remove it with: instabox rm $name" >&2' EXIT
+((keep)) || trap 'remove "$name"' EXIT
 echo "box: running $sha on $name" >&2
 
 # The token arrives on stdin, is used for one fetch, and is never stored on the

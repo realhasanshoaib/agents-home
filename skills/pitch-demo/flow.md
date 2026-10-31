@@ -1,6 +1,6 @@
 # Flow: their application filled in by voice
 
-Start from the Mercury build, branch `flow-mercury` of moet-poc. Make a worktree from that branch if this machine has none, and report it missing rather than starting from another build. Q9 Brain Canon `mercury-flow-pitch` records what was decided and why.
+Start from the Mercury build, branch `flow-mercury` of moet-poc. Make a worktree from that branch if this machine has none, and report it missing rather than starting from another build. The Q9 Brain note `canon:facts/mercury-flow-pitch` (read it with `get`) records what was decided and why.
 
 - **What to rebuild.** Their real application or intake form, with its steps, step rail, colours and type. Use the closest free font when theirs is proprietary.
 - **What the guide catches.** Research the mistakes that stall their applications, and make the voice guide catch them while the person talks, with the fields filling live. Mercury's were the wrong EIN document, a virtual address as the place of business, and a holding company listed as an owner.

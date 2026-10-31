@@ -1,7 +1,6 @@
 ---
 name: pitch-demo
-description: Use when Hasan asks to build a demo to pitch a company, such as cloning their website with a live Ava voice agent on it (like OnTime), rebuilding their application with Flow (like Mercury), or a custom workflow prototype (like the Future Divine RFQ desk).
-disable-model-invocation: true
+description: "Use only when Hasan asks for pitch-demo or a demo to pitch a company."
 ---
 
 # Build a demo for a prospect
@@ -10,18 +9,18 @@ A pitch exists to get the decision maker to reply and take one next step. We put
 
 The lead decides what is true and what we ask for, in the brief. Builders implement the brief, prove each acceptance case, and return any gap to the lead instead of filling it themselves.
 
-1. **Research.** Read the prospect's Relationship, any meeting recording or RFQ, and the related Canon in Q9 Brain to the end, paging any result that comes back cut. Then research their business from public sources: what they sell and to whom, what they already offer (hours, chat, WhatsApp, languages), their competitors, recent news, and who decides. For a cold prospect, add the proof from step 3 of `/Users/macmini/code/q9-pitch/docs/sales-workflow.md`; never run a reply-speed test on anyone we've met. Write `research.md` in the demo repo in four parts: sourced facts, what the buyer said, our assumptions, and unknowns.
+1. **Research.** Read the prospect's Contact (`get`), any meeting recording or RFQ, and the related Memories and Sources in Q9 Brain (`search`) to the end, paging any result that comes back cut. Then research their business from public sources: what they sell and to whom, what they already offer (hours, chat, WhatsApp, languages), their competitors, recent news, and who decides. For a cold prospect, add the proof from step 3 of `/Users/macmini/code/q9-pitch/docs/sales-workflow.md`; never run a reply-speed test on anyone we've met. Write `research.md` in the demo repo in four parts: sourced facts, what the buyer said, our assumptions, and unknowns.
 2. **Write the brief.** Copy `brief-template.md` to `brief.md` in the demo repo and fill in every field. Done when Hasan has said yes to it.
-3. **Rebuild only the pages the demo touches**, in their layout, colours, fonts, logo and images, from public sources and never their customers' data. Put a footer on every rebuilt page: "Concept demo by Q9 Labs. Not affiliated with <company>." Add `noindex` and a preview card (title, description, image). Fix what a visitor would notice at 1440 px and 390 px, and stop there.
+3. **Clone only the pages the demo touches** with the `clone-site` skill.
 4. **Build the product journey** the brief names: `ava.md` for a voice agent on their website, `flow.md` for a voice guide that fills their application, or, for a custom workflow, the one journey, data and simulation boundary the brief specifies. It must do the brief's hard case, not only the intake. A custom workflow's screens look like the enterprise SaaS tools their team already buys: a side navigation, a row of KPI cards, a table of work items with status and owner, and a detail panel that opens from a row, laid out for 1440 px first. When you start from an earlier demo, keep its logic and build its screens to this standard.
 5. **Deploy** it as its own Cloudflare Worker on the hostname in the brief, with `workers_dev: false`. Done when every acceptance case in the brief passes on the deployed site, with the result saved in `acceptance.md`.
 6. **Record the video** only when it was asked for, following the `video` skill, so Hasan approves the script, the voices and a sample first. Record and cut it with `/Users/macmini/code/pitch-kit/video`, as its README says, to 30 to 60 seconds with one visible caption layer, counting any captions the widget shows, and label simulated steps. Put it at `/journey/`.
-7. **Build the deck** at `/proposal/` on the same Worker, from one of the pitch-kit deck templates and the brief's words, as `deck.md` says, and apply the `squint` skill.
+7. **Build the deck** at `/proposal/` on the same Worker, from one of the pitch-kit deck templates and the brief's words, with the `deck` skill and `proposal.md`.
 8. **Draft the email** with the `write-email` skill, from the relationship owner, with the deck link and the brief's ask, in the brief's words.
 9. **Check the facts.** A lane lists every claim the deck, the email, the video and the agent's answers make about the prospect, their trade or us, and checks each against `research.md` and its source. Every claim it can't back goes back to the lead, who fixes or cuts it.
 10. **Run the pre-send check**, `scripts/precheck.sh` in this skill, against the deck URL and the email draft, with `--demo <id>` when the demo has Ava. It fails on a missing deck link or ask in the email, our team or cost in anything the prospect sees, a vendor account with no credit, a call that won't start, a slide count over the limit, or a demo button in the deck that opens to an access error, and it writes contact sheets of every slide at 1440 × 900 and 390 px.
 11. **Show and send.** The lead reads the contact sheets against `rubric.md` area 4 and has every slide below a 9 fixed, then reads `acceptance.md` and the email against the brief. The lead then gives whoever asked for the demo the full link to send, `https://<host>/proposal/?k=<key>` when the demo has an access key, and shows them the deck, the video and the email. That person sends it. On the day it goes, and before every follow-up, run the pre-send check again.
-12. **Log it** in Q9 Brain in one `note`: the demo URL and the decisions as a Fact, the send as an Interaction once it went, and the dated follow-ups as Next actions.
+12. **Log it** in Q9 Brain in one `save`: a `session` Source with the demo URL and the decisions, a `decision` Memory per decision and an `action` Memory per dated follow-up, each quoting that Source, and a `log` Source for the send once it went.
 
 Nothing the prospect sees shows our side of the cost: no team size or make-up, roles, hours, person-weeks, day rates, vendor costs or margin, because headcount and time let them work out what the work costs us. The deck, the email and the PDF show only what they pay and one delivery time from signing to go-live.
 

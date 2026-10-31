@@ -1,0 +1,6 @@
+interface:
+  display_name: "Devin Box"
+  short_description: "Windows, macOS or Ubuntu cloud boxes on Devin (SWE-2, free until 22 Nov 2026) for testing"
+  default_prompt: "Use $devin-box to test this on a Windows box."
+policy:
+  allow_implicit_invocation: true

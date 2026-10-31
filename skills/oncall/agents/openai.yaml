@@ -3,4 +3,4 @@ interface:
   short_description: "Handle a production alert for one of Hasan's apps: confirm, dedupe, diagnose, act, record"
   default_prompt: "Use $oncall to handle this alert."
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

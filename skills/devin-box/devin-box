@@ -1,0 +1,56 @@
+#!/bin/bash
+# Windows, macOS or Ubuntu boxes on Devin cloud, driven by SWE-2 (free on the Devin Max plan).
+#
+#   devin-box up <windows|macos|linux> [owner/repo]...   start a box, print its session id
+#   devin-box run <id> '<command>'                       run a command, print stdout/stderr, exit with its code
+#   devin-box ssh <id> ['<command>']                     shell on the box; pipe files through it
+#   devin-box forward <id> <local>:<remote>              forward a box port to this Mac
+#   devin-box rm <id>                                    stop and archive the box
+#   devin-box ls                                         boxes this script started and their status
+#   devin-box usage                                      ACUs the org used, by day
+set -euo pipefail
+
+ORG=org-dd6f4eafd4664811b1882d7db970ed28  # Q9 Labs, Max plan; use no other org
+API=https://api.devin.ai/v3/organizations/$ORG
+KEY=$(sed -nE 's/^windsurf_api_key *= *"?([^"]+)"?/\1/p' ~/.local/share/devin/credentials.toml)
+[ -n "$KEY" ] || { echo "devin-box: not signed in; run: devin auth login" >&2; exit 1; }
+
+api() { curl -sS --fail-with-body -H "Authorization: Bearer $KEY" -H 'Content-Type: application/json' "$@"; }
+
+case "${1:-}" in
+  up)
+    platform=${2:?platform: windows, macos or linux}; shift 2
+    repos=$(printf '%s\n' "$@" | python3 -I -c 'import json,sys; print(json.dumps([l for l in sys.stdin.read().split() if l]))')
+    body=$(python3 -I -c 'import json,sys; print(json.dumps({"prompt":"This box is driven by another agent over the command API. Take no action and wait.","platform":sys.argv[1],"devin_mode":"swe-2-high","title":"devin-box "+sys.argv[1],"repos":json.loads(sys.argv[2])}))' "$platform" "$repos")
+    api -X POST "$API/sessions" -d "$body" | python3 -I -c 'import json,sys; print(json.load(sys.stdin)["session_id"])'
+    ;;
+  run)
+    id=${2:?session id}; cmd=${3:?command}
+    for try in $(seq 10); do  # a fresh box, Windows especially, misses calls for a few minutes while it boots
+      out=$(devin cloud drs run --devin-id "$id" --command "$cmd" --timeout 300 2>&1) && break
+      [ "$try" = 10 ] && { echo "$out" >&2; exit 1; }; sleep 30
+    done
+    printf '%s' "$out" | python3 -I -c '
+import json,sys
+r=json.load(sys.stdin).get("response") or {}
+sys.stdout.write(r.get("stdout") or ""); sys.stderr.write(r.get("stderr") or "")
+sys.exit(r.get("exit_code",1))'
+    ;;
+  ssh)     id=${2:?session id}; shift 2; script -q /dev/null devin ssh "$id" "$@" ;;
+  forward) script -q /dev/null devin forward "${2:?session id}" "${3:?local:remote}" ;;
+  rm)
+    id=${2:?session id}
+    out=$(api -X DELETE "$API/sessions/$id" 2>&1) || grep -q 'already exited\|suspended' <<<"$out" || { echo "$out" >&2; exit 1; }
+    api -X POST "$API/sessions/$id/archive" >/dev/null
+    echo "$id stopped and archived"
+    ;;
+  ls)
+    api "$API/sessions?limit=50" | python3 -I -c '
+import json,sys
+d=json.load(sys.stdin); items=d.get("items") or d.get("sessions") or []
+for s in items:
+    if (s.get("title") or "").startswith("devin-box"): print(s["session_id"], s.get("status"), s.get("title"), "archived" if s.get("is_archived") else "")'
+    ;;
+  usage) api "$API/consumption/daily"; echo ;;
+  *) sed -n '2,10p' "$0"; exit 1 ;;
+esac
