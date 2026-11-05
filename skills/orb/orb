@@ -9,7 +9,7 @@
 
 Machines come from ~/.agents/skills/instabox/box (create + clone) and the instabox CLI.
 """
-import hashlib, html, json, os, re, shlex, shutil, subprocess, sys, time
+import base64, hashlib, html, json, os, re, shlex, shutil, subprocess, sys, time
 from pathlib import Path
 
 # Where `orb down` saves panels. Which store is permanent is still undecided: change it here.
@@ -78,19 +78,78 @@ def ports(name):
     return {p["port"]: p["url"] for p in out.get("ports", [])}
 
 
-def transport(name, remote_command, stdin=None):
-    """The one place that reaches a machine. `remote_command` is a shell command string; stdin is bytes or None."""
-    return subprocess.run(["instabox", "ssh", name, "--", remote_command], input=stdin, capture_output=True)
+def instabox_exec(name, command, stdin=None, timeout=60):
+    cmd = ["instabox", "exec", name, "--timeout", str(timeout)] + (["--stdin"] if stdin is not None else []) + ["--", command]
+    return subprocess.run(cmd, input=stdin, capture_output=True)
+
+
+def transport(name, script):
+    """The one place that reaches a machine, because Instabox's SSH gateway has refused new machines since
+    5 Nov 2026 ~18:00 UTC (see SKILL.md). `exec` caps a call at 10 minutes, buffers its output and can silently
+    drop stdin, so the script is sent whole (the hash proves it arrived), runs detached from a RAM file, and
+    this polls its log. Secrets in the script never reach an argv. Returns (exit code, combined output)."""
+    job, data = f"orb-{os.getpid()}-{time.monotonic_ns()}", script.encode()
+    if len(data) > 900_000:
+        raise OrbError("script too large for exec stdin")
+    digest = hashlib.sha256(data).hexdigest()
+    base = f"/dev/shm/{job}"
+    start = (f"umask 077; cat > {base}.sh; [ \"$(sha256sum < {base}.sh | cut -d' ' -f1)\" = {digest} ] || {{ echo 'stdin arrived damaged'; exit 98; }}; "
+             f"setsid nohup bash -c 'bash -l {base}.sh </dev/null > {base}.log 2>&1; echo $? > {base}.exit; rm -f {base}.sh' >/dev/null 2>&1 </dev/null &")
+    for attempt in range(3):
+        p = instabox_exec(name, start, data)
+        if p.returncode == 0:
+            break
+        if attempt == 2:
+            raise OrbError(f"could not start a job on {name}: {(p.stdout + p.stderr).decode(errors='replace')[-400:]}")
+        time.sleep(3)
+    out, offset, failures = bytearray(), 0, 0
+    while True:
+        time.sleep(1.5)
+        p = instabox_exec(name, f"cat {base}.exit 2>/dev/null || echo; tail -c +{offset + 1} {base}.log 2>/dev/null | head -c 1048576; true", timeout=30)
+        if p.returncode:
+            failures += 1
+            if failures >= 60:
+                raise OrbError(f"lost contact with {name}")
+            continue
+        failures = 0
+        code, _, chunk = p.stdout.partition(b"\n")
+        out += chunk
+        offset += len(chunk)
+        if code.strip():
+            instabox_exec(name, f"rm -f {base}.log {base}.exit")
+            return int(code), out.decode(errors="replace")
 
 
 def ssh(name, script, *, check=True):
-    """Run a script on the box. It travels on stdin, so secrets in it never reach an argv."""
-    wrapper = "bash -c 'umask 077; cat >/dev/shm/orb-step.sh; bash -l /dev/shm/orb-step.sh </dev/null; rc=$?; rm -f /dev/shm/orb-step.sh; exit $rc'"
-    raw = transport(name, wrapper, script.encode())
-    p = subprocess.CompletedProcess(raw.args, raw.returncode, raw.stdout.decode(errors="replace"), raw.stderr.decode(errors="replace"))
-    if check and p.returncode:
-        raise OrbError(f"on {name}: exit {p.returncode}: {((p.stderr or '') + (p.stdout or '')).strip()[-1000:]}")
+    code, output = transport(name, script)
+    p = subprocess.CompletedProcess(["transport"], code, output, "")
+    if check and code:
+        raise OrbError(f"on {name}: exit {code}: {output.strip()[-1000:]}")
     return p
+
+
+def upload(name, data, remote_dir):
+    """Unpack a tar (bytes) into remote_dir. exec stdin takes 1 MiB, so the archive goes up in base64 chunks."""
+    b64 = base64.b64encode(data)
+    part = f"/dev/shm/orb-upload-{os.getpid()}.b64"
+    ssh(name, f": > {part}")
+    for i in range(0, len(b64), 600_000):
+        chunk = b64[i:i + 600_000]
+        want = len(chunk)
+        for attempt in range(3):
+            p = instabox_exec(name, f"cat >> {part}.next && [ \"$(wc -c < {part}.next)\" = {want} ] && cat {part}.next >> {part}; rc=$?; rm -f {part}.next; exit $rc", chunk)
+            if p.returncode == 0:
+                break
+            if attempt == 2:
+                raise OrbError(f"upload to {name} failed: {p.stdout.decode(errors='replace')[-300:]}")
+    ssh(name, f"[ \"$(wc -c < {part})\" = {len(b64)} ] || {{ echo 'upload incomplete'; exit 1; }}\n"
+              f"mkdir -p {remote_dir} && find {remote_dir} -mindepth 1 -delete && base64 -d < {part} | tar -C {remote_dir} -x; rc=$?; rm -f {part}; exit $rc")
+
+
+def download_tar(name, remote_cmd):
+    """Run a command on the machine that writes a tar to stdout and return its bytes."""
+    out = ssh(name, f"{remote_cmd} | base64 -w0; echo").stdout
+    return base64.b64decode(out.strip().splitlines()[-1])
 
 
 def orb_key(repo, branch):
@@ -204,23 +263,24 @@ def cmd_up(repo, branch):
         meta = json.dumps({"repo": repo, "branch": branch, "sha": sha, "origin": origin, "panel": panel_url})
     ssh(name, f"umask 077\nprintf '%s' {shlex.quote(meta)} > ~/.orb.json\ncat > /dev/shm/orb.env <<'ORBENV'\n{exports(values)}ORBENV\n"
               "mkdir -p ~/panel && [ -f ~/panel/index.html ] || echo '<h1>No verification run yet</h1>' > ~/panel/index.html\n"
-              f"tmux has-session -t orbpanel 2>/dev/null || tmux new-session -d -s orbpanel 'cd ~/panel && exec python3 -m http.server {PANEL_PORT} --bind 0.0.0.0'\n")
+              f"tmux has-session -t =orbpanel 2>/dev/null || tmux new-session -d -s orbpanel 'cd ~/panel && exec python3 -m http.server {PANEL_PORT} --bind 0.0.0.0'\n")
     mark("secrets and panel placeholder sent")
 
-    if ssh(name, "tmux has-session -t orb 2>/dev/null", check=False).returncode:
+    if ssh(name, "tmux has-session -t =orb 2>/dev/null", check=False).returncode:
         ssh(name, "cd ~/work && pnpm install --frozen-lockfile 2>&1 | tail -3")
         mark("pnpm install")
         ssh(name, f"cd ~/work && : > /tmp/orb-up.log && tmux new-session -d -s orb \"set -a; . /dev/shm/orb.env; set +a; exec {profile['up']} > /tmp/orb-up.log 2>&1\"")
     ready = shlex.quote(profile["ready"])
     out = ssh(name, f"end=$((SECONDS+{READY_TIMEOUT_S}))\n"
                     f"until grep -qE {ready} /tmp/orb-up.log; do\n"
-                    f"  tmux has-session -t orb 2>/dev/null || {{ echo 'stack exited before ready'; tail -40 /tmp/orb-up.log; exit 1; }}\n"
+                    f"  tmux has-session -t =orb 2>/dev/null || {{ echo 'stack exited before ready'; tail -40 /tmp/orb-up.log; exit 1; }}\n"
                     f"  [ $SECONDS -lt $end ] || {{ echo 'timed out waiting for ready'; tail -40 /tmp/orb-up.log; exit 1; }}\n"
                     f"  sleep 2\ndone\ngrep -E {ready} /tmp/orb-up.log | tail -1 | sed -E 's/credentials=[^ ]+//'\n").stdout.strip()
     mark("stack ready")
     doc = ssh(name, f"set -a; . /dev/shm/orb.env; set +a; cd ~/work && {profile['doctor']}", check=False)
     if doc.returncode:
-        raise OrbError(f"doctor failed on {name}:\n{(doc.stdout + doc.stderr).strip()[-1500:]}")
+        print(f"orb      {name}\npreview  {origin}/ (doctor failed, not usable)\ntime-to-ready {marks[-1][1]:.0f}s ({', '.join(f'{l} {t:.0f}s' for l, t in marks)})")
+        raise OrbError(f"doctor failed on {name}; the machine is kept for inspection:\n{(doc.stdout + doc.stderr).strip()[-1500:]}")
     mark("doctor passed")
     signin = ssh(name, f"set -a; . /dev/shm/orb.env; set +a; cd ~/work && {profile['signin']}").stdout.strip()
     drift = ssh(name, "git -C ~/work rev-parse HEAD").stdout.strip()
@@ -261,10 +321,8 @@ def cmd_verify(name):
 def pull_verify(name, dest):
     shutil.rmtree(dest, ignore_errors=True)
     dest.mkdir(parents=True)
-    tar = transport(name, "tar -C ~/work -c .verify")
-    if tar.returncode:
-        raise OrbError(f"cannot copy .verify from {name}: {tar.stderr.decode()[-400:]}")
-    subprocess.run(["tar", "-x", "-C", str(dest)], input=tar.stdout, check=True)
+    tar = download_tar(name, "tar -C ~/work -c .verify")
+    subprocess.run(["tar", "-x", "-C", str(dest)], input=tar, check=True)
 
 
 def build_panel(name, meta, evidence, out):
@@ -336,9 +394,7 @@ def cmd_panel(name, serve=True):
     scan_for_secrets(profile, out)
     if serve:
         tar = subprocess.run(["tar", "-C", str(out), "-c", "."], capture_output=True, check=True).stdout
-        p = transport(name, "rm -rf ~/panel/* && tar -C ~/panel -x", tar)
-        if p.returncode:
-            raise OrbError(f"cannot upload panel: {p.stderr.decode()[-400:]}")
+        upload(name, tar, "~/panel")
         print(f"panel    {meta['panel']}/")
     return out, evidence, meta
 
