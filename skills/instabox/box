@@ -95,6 +95,36 @@ remove() {
   return 1
 }
 
+# Runs the script on stdin on $name and returns its exit status. Since 5 Nov 2026
+# about 18:00 UTC, Instabox's SSH gateway rejects the certificate on every new
+# machine (Permission denied (publickey)), while `instabox exec` still works. exec
+# buffers its output and kills a call after 10 minutes, so without ssh the script
+# runs detached on the machine and this polls its log and exit marker.
+remote() {
+  if instabox ssh "$name" -- true </dev/null >/dev/null 2>&1; then
+    instabox ssh "$name" -- bash -l -s
+    return
+  fi
+  local out offset=0 failures=0 header code status
+  out=$(mktemp)
+  instabox exec "$name" --stdin --timeout 60 -- 'cat > ~/.box-job.sh; rm -f ~/.box-job.exit; setsid nohup bash -c "exec 3< ~/.box-job.sh; rm ~/.box-job.sh; bash -l -s <&3 > ~/.box-job.log 2>&1; echo \$? > ~/.box-job.exit" > /dev/null 2>&1 < /dev/null &' || { rm -f "$out"; echo "box: could not start the job on $name" >&2; return 255; }
+  while sleep 5; do
+    # The exit marker is read before the log, so a finished job's log is complete.
+    if ! instabox exec "$name" --timeout 30 -- "cat ~/.box-job.exit 2>/dev/null || echo; tail -c +$((offset + 1)) ~/.box-job.log 2>/dev/null | head -c 1048576; true" > "$out" 2>/dev/null; then
+      ((++failures >= 60)) && { echo "box: lost contact with $name" >&2; status=255; break; }
+      continue
+    fi
+    failures=0
+    code=$(head -n 1 "$out")
+    header=$(( ${#code} + 1 ))
+    tail -c +$((header + 1)) "$out"
+    offset=$(( offset + $(wc -c < "$out") - header ))
+    [[ -n $code ]] && { status=$code; break; }
+  done
+  rm -f "$out"
+  return "$status"
+}
+
 prefix=$(basename "$repo" | tr 'A-Z' 'a-z' | tr -c 'a-z0-9\n' '-' | cut -c1-20)
 start=$(date +%s)
 name=""
@@ -210,7 +240,7 @@ status=\$?
 printf '%s\n' "\$status" > .box-runner-exit
 exit "\$status"
 EOF
-    } | instabox ssh "$name" -- bash -l -s &
+    } | remote &
     runner=$!
     # The runner signs off after its job, but the ssh session can stall and
     # never report that. Its exit marker also catches jobs that register and
@@ -255,7 +285,7 @@ unset T
 git checkout -q $sha
 bash -lc $(printf %q "$command") </dev/null
 EOF
-} | instabox ssh "$name" -- bash -l -s
+} | remote
 status=$?
 echo "box: exit $status after $(( $(date +%s) - start ))s" >&2
 ((keep)) && echo "box: kept $name. Reach it with: instabox ssh $name" >&2
