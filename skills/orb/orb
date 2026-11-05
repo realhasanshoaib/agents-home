@@ -105,7 +105,7 @@ def transport(name, script):
     out, offset, failures = bytearray(), 0, 0
     while True:
         time.sleep(1.5)
-        p = instabox_exec(name, f"cat {base}.exit 2>/dev/null || echo; tail -c +{offset + 1} {base}.log 2>/dev/null | head -c 1048576; true", timeout=30)
+        p = instabox_exec(name, f"cat {base}.exit 2>/dev/null || echo; tail -c +{offset + 1} {base}.log 2>/dev/null | head -c 1000000; true", timeout=30)
         if p.returncode:
             failures += 1
             if failures >= 60:
@@ -115,9 +115,11 @@ def transport(name, script):
         code, _, chunk = p.stdout.partition(b"\n")
         out += chunk
         offset += len(chunk)
-        if code.strip():
+        if code.strip() and len(chunk) < 1000000:
             instabox_exec(name, f"rm -f {base}.log {base}.exit")
             return int(code), out.decode(errors="replace")
+        if len(chunk) >= 1000000:
+            continue
 
 
 def ssh(name, script, *, check=True):
@@ -224,6 +226,20 @@ def read_meta(name):
     return json.loads(ssh(name, "cat ~/.orb.json").stdout)
 
 
+def tunnel_url(name, port):
+    """Stand-in while Instabox's gateway answers 503 for new machines' public ports (ORB_PUBLIC=tunnel):
+    a Cloudflare quick tunnel gives the same shape of origin, an HTTPS URL that forwards to the port."""
+    log = f"/tmp/cf-{port}.log"
+    out = ssh(name, "[ -x ~/cloudflared ] || { curl -fsSL -o ~/cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 && chmod +x ~/cloudflared; }\n"
+                    f"tmux has-session -t =orbtun{port} 2>/dev/null || tmux new-session -d -s orbtun{port} \"exec ~/cloudflared tunnel --no-autoupdate --url http://localhost:{port} > {log} 2>&1\"\n"
+                    f"for i in $(seq 60); do grep -om1 'https://[a-z0-9-]*\\.trycloudflare\\.com' {log} && exit 0; sleep 1; done; echo 'no tunnel URL'; exit 1\n").stdout
+    return out.strip().splitlines()[-1]
+
+
+def phases(marks):
+    return ', '.join(f'{l} {t - (marks[i - 1][1] if i else 0):.0f}s' for i, (l, t) in enumerate(marks))
+
+
 def cmd_up(repo, branch):
     repo = repo.lower().split("/")[-1]
     if repo not in PROFILES:
@@ -250,10 +266,13 @@ def cmd_up(repo, branch):
         name, sha = create_machine(key, profile, branch)
     mark("machine found" if existing else "machine created, branch cloned")
 
-    for port in (profile["port"], PANEL_PORT):
-        if port not in ports(name):
-            run(["instabox", "port", "publish", name, str(port)])
-    urls = ports(name)
+    if os.environ.get("ORB_PUBLIC") == "tunnel":
+        urls = {port: tunnel_url(name, port) for port in (profile["port"], PANEL_PORT)}
+    else:
+        for port in (profile["port"], PANEL_PORT):
+            if port not in ports(name):
+                run(["instabox", "port", "publish", name, str(port)])
+        urls = ports(name)
     origin, panel_url = urls[profile["port"]].rstrip("/"), urls[PANEL_PORT].rstrip("/")
     mark("ports published")
 
@@ -279,7 +298,7 @@ def cmd_up(repo, branch):
     mark("stack ready")
     doc = ssh(name, f"set -a; . /dev/shm/orb.env; set +a; cd ~/work && {profile['doctor']}", check=False)
     if doc.returncode:
-        print(f"orb      {name}\npreview  {origin}/ (doctor failed, not usable)\ntime-to-ready {marks[-1][1]:.0f}s ({', '.join(f'{l} {t:.0f}s' for l, t in marks)})")
+        print(f"orb      {name}\npreview  {origin}/ (doctor failed, not usable)\ntime-to-ready {marks[-1][1]:.0f}s ({phases(marks)})")
         raise OrbError(f"doctor failed on {name}; the machine is kept for inspection:\n{(doc.stdout + doc.stderr).strip()[-1500:]}")
     mark("doctor passed")
     signin = ssh(name, f"set -a; . /dev/shm/orb.env; set +a; cd ~/work && {profile['signin']}").stdout.strip()
@@ -293,7 +312,7 @@ def cmd_up(repo, branch):
     print(f"panel    {panel_url}/")
     print(f"sign-in  {signin}")
     print(f"ready    {out}")
-    print(f"time-to-URL {marks[-1][1]:.0f}s ({', '.join(f'{l} {t:.0f}s' for l, t in marks)})")
+    print(f"time-to-URL {marks[-1][1]:.0f}s ({phases(marks)})")
 
 
 def cmd_verify(name):
