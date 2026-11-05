@@ -5,7 +5,8 @@
 #
 #   box run [--keep] [--fetch <branch>]... -- '<command>'
 #                                     e.g. box run -- 'pnpm install --frozen-lockfile && pnpm gate:full'
-#   box runner [--idle <minutes>]     self-hosted GitHub Actions runners, label instabox
+#   box runner [--idle <minutes>] [--dispatcher <name>]
+#                                     self-hosted GitHub Actions runners, label instabox
 #   box ls                            machines that box started
 #
 # HEAD must be pushed. The checkout also has origin's default branch and every
@@ -15,11 +16,14 @@
 #
 # runner gives each queued job labelled instabox in the current repository a
 # fresh machine with a single-job runner, deletes the machine after the job, and
-# stops once no job has been queued for --idle minutes (default 10).
+# stops once no job has been queued for --idle minutes (default 10; 0 never stops).
+# --dispatcher <name> is for an unattended runner: it refuses to start when another
+# dispatcher for this repository runs on this host, names its machines box-<name>-*,
+# and on start deletes the machines a crashed run of <name> left behind.
 set -u
 snapshot=${BOX_SNAPSHOT:-q9-base-20261030}
 
-usage() { sed -n '2,18p' "$0" >&2; exit 64; }
+usage() { sed -n '2,22p' "$0" >&2; exit 64; }
 
 mode=${1:-}
 case "$mode" in
@@ -29,12 +33,14 @@ case "$mode" in
 esac
 keep=0
 idle=10
+dispatcher=
 branches=()
 while (($#)); do
   case "$mode $1" in
     "run --keep") keep=1; shift ;;
     "run --fetch") branches+=("${2:?--fetch needs a branch}"); shift 2 ;;
     "runner --idle") idle=${2:?--idle needs minutes}; shift 2 ;;
+    "runner --dispatcher") dispatcher=${2:?--dispatcher needs a name}; shift 2 ;;
     "run --") shift; break ;;
     *) usage ;;
   esac
@@ -97,7 +103,7 @@ name=""
 create() {
   local candidate="box-$prefix-$(date +%H%M%S)-$$" since waiting=0 error
   since=$(date +%s)
-  until error=$(instabox create --name "$candidate" --snapshot "$snapshot" --no-vault --secrets none --meta box=1 --meta "host=$host" --meta "pid=$$" --meta "keep=$keep" 2>&1 >/dev/null); do
+  until error=$(instabox create --name "$candidate" --snapshot "$snapshot" --no-vault --secrets none --meta box=1 --meta "host=$host" --meta "pid=$$" --meta "keep=$keep" ${dispatcher:+--meta "dispatcher=$dispatcher"} 2>&1 >/dev/null); do
     # Instabox's API gateway sometimes answers 5xx or times out; that is not a refusal.
     if [[ $error == *"Bad Gateway"* || $error == *"Service Unavailable"* || $error == *"Gateway Time"* || $error == *"handshake timeout"* ]]; then
       sleep 30
@@ -148,15 +154,34 @@ if [[ $mode == runner ]]; then
     remove "$name"
     name=""
   }
-  trap cleanup EXIT
+  lock=""
+  trap 'cleanup; [[ -z $lock ]] || { rm -f "$lock/pid"; rmdir "$lock"; }' EXIT
+
+  if [[ -n $dispatcher ]]; then
+    prefix=$dispatcher
+    lock="/tmp/box-dispatcher-${slug//\//-}.lock"
+    if ! mkdir "$lock" 2>/dev/null; then
+      if kill -0 "$(cat "$lock/pid" 2>/dev/null)" 2>/dev/null; then
+        echo "box: a dispatcher for $slug already runs here (pid $(cat "$lock/pid"))" >&2
+        lock=""
+        exit 1
+      fi
+      echo "box: taking over the lock of a dispatcher that died" >&2
+    fi
+    echo $$ > "$lock/pid"
+    # The lock makes this the only dispatcher of $dispatcher on this host, so its machines are leftovers.
+    instabox ls --meta "dispatcher=$dispatcher" --json | python3 -I -c 'import json,sys; [print(m["name"]) for m in json.load(sys.stdin)]' | while read -r stale; do
+      remove "$stale" && echo "box: deleted $stale, left behind by a dispatcher that died" >&2
+    done
+  fi
 
   # A job can leave a process behind that reads the secrets of the next job on
   # the same machine, so every job gets its own machine and single-job runner.
-  echo "box: serving $slug until no job has been queued for $idle minutes" >&2
+  echo "box: serving $slug${dispatcher:+ as $dispatcher}$( ((idle)) && echo " until no job has been queued for $idle minutes")" >&2
   last_busy=$(date +%s)
   while :; do
     if (( $(queued) == 0 )); then
-      if (( $(date +%s) - last_busy >= idle * 60 )); then
+      if (( idle > 0 && $(date +%s) - last_busy >= idle * 60 )); then
         echo "box: no job for $idle minutes, stopping after $(( ($(date +%s) - start) / 60 )) minutes" >&2
         exit 0
       fi
