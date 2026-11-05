@@ -194,8 +194,14 @@ if [[ $mode == runner ]]; then
       echo 'read -r T'
       printf '%s\n' "$registration"
       cat <<EOF
+    machine_start=$(date +%s)
 mkdir -p ~/runner && cd ~/runner
 curl -fsSL https://github.com/actions/runner/releases/download/v$version/actions-runner-linux-x64-$version.tar.gz | tar xz
+      # The longest Ava job timeout is 60 minutes; add about 3 for the machine to start and a margin.
+      if (( $(date +%s) - machine_start >= 75 * 60 )); then
+        echo "box: $name ran for 75 minutes, deleting it so a hung job can't hold a machine" >&2
+        break
+      fi
 sudo ./bin/installdependencies.sh >/dev/null
 ./config.sh --unattended --ephemeral --url $(printf %q "https://github.com/$slug") --token "\$T" --name $name --labels instabox >/dev/null || exit 97
 unset T
