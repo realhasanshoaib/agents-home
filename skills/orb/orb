@@ -1,0 +1,398 @@
+#!/usr/bin/env python3
+"""orb: turn a branch into a live preview (an Orb) on an Instabox machine.
+
+  orb up <repo> <branch>   create or reuse the Orb, start the stack, print URLs and sign-in
+  orb verify <orb>         run the repo's verify-<app> journeys against the public URL
+  orb panel <orb>          build the review panel and serve it on the second port
+  orb status               list Orbs with their URLs (read-only)
+  orb down <orb>           save the panel and .verify/ on this Mac, then delete the machine
+
+Machines come from ~/.agents/skills/instabox/box (create + clone) and the instabox CLI.
+"""
+import hashlib, html, json, os, re, shlex, shutil, subprocess, sys, time
+from pathlib import Path
+
+# Where `orb down` saves panels. Which store is permanent is still undecided: change it here.
+PANELS_DIR = Path(os.environ.get("ORB_PANELS_DIR", "/Users/macmini/code/orbs"))
+CACHE = Path(os.environ.get("ORB_CACHE", Path.home() / ".cache" / "orb"))
+BOX = Path(__file__).resolve().parent.parent / "instabox" / "box"
+PANEL_PORT = 8099
+READY_TIMEOUT_S = 1500
+SFU = "op://dev/Cloudflare Realtime SFU chalk-local-dev-20260714"
+
+# The launch contract per repo; the commands come from each repo's verify-<app> skill.
+# Each journey is a shell command run in the checkout with PUBLIC_ORIGIN and RUN set.
+PROFILES = {
+    "ava": dict(
+        slug="realhasanshoaib/Ava", port=5173, ready="AVA_READY",
+        up="pnpm dev", doctor="pnpm dev:doctor", down="pnpm dev:down",
+        secrets={},
+        signin=r"""node -e 'const f=require("fs"),r=JSON.parse(f.readFileSync(".dev-data/run.json")),s=JSON.parse(f.readFileSync(".dev-data/secrets.json"));console.log("email="+r.email+" password="+s.seedPassword)'""",
+        verify_prep="npm install --prefix .agents/skills.available/verify-ava --no-save --no-package-lock playwright-core@1.64.1",
+        journeys={j: f"node .agents/skills.available/verify-ava/drive.mjs {j} $RUN-{j}" for j in ("sign-in", "prompt-create")},
+    ),
+    "recruiter": dict(
+        slug="Q9Labs/recruiter", port=8080, ready="READY ",
+        up="pnpm dev", doctor="pnpm dev:doctor", down="pnpm dev:down",
+        secrets={},
+        signin=r"""echo "email=${SEED_EMAIL:-verify@recruiter.local} password=${SEED_PASSWORD:-verify-pass-1234} portal=$PUBLIC_ORIGIN/portal/" """,
+        verify_prep="CHROMIUM_PATH=/usr/bin/chromium pnpm exec playwright install ffmpeg",
+        journeys={j: f"CHROMIUM_PATH=/usr/bin/chromium node .agents/skills/verify-recruiter/scripts/journey.mjs {j} $RUN-{j}" for j in ("sign-in", "candidates", "interview", "apply")},
+    ),
+    "chalk": dict(
+        slug="Q9Labs/chalk", port=3070, ready="Chalk dev ready",
+        up="pnpm dev", doctor="pnpm dev:doctor", down="pnpm dev:down",
+        secrets={"CHALK_CLOUDFLARE_REALTIME_APP_ID": f"{SFU}/app_id", "CHALK_CLOUDFLARE_REALTIME_APP_SECRET": f"{SFU}/app_secret"},
+        signin=r"""node -e 'const s=JSON.parse(require("fs").readFileSync(".private/chalk-dev/seed.json"));console.log("guest invite (no password): "+s.urls.public+s.invite.path)'""",
+        verify_prep="pnpm exec playwright install --with-deps chromium",
+        journeys={"join-call": "node .agents/skills/verify-chalk/scripts/join-call.mjs $RUN-join-call"},
+    ),
+}
+
+
+class OrbError(Exception):
+    pass
+
+
+def run(cmd, *, input=None, check=True, cwd=None):
+    p = subprocess.run(cmd, input=input, text=True, capture_output=True, cwd=cwd)
+    if check and p.returncode:
+        raise OrbError(f"{shlex.join(cmd[:3])} failed ({p.returncode}): {(p.stderr or p.stdout or '').strip()[-600:]}")
+    return p
+
+
+def say(msg):
+    print(f"orb: {msg}", file=sys.stderr, flush=True)
+
+
+def machines():
+    return json.loads(run(["instabox", "ls", "--json"]).stdout or "[]")
+
+
+def machine(name):
+    return next((m for m in machines() if m["name"] == name), None)
+
+
+def ports(name):
+    out = json.loads(run(["instabox", "port", "ls", name, "--json"]).stdout or "{}")
+    return {p["port"]: p["url"] for p in out.get("ports", [])}
+
+
+def transport(name, remote_command, stdin=None):
+    """The one place that reaches a machine. `remote_command` is a shell command string; stdin is bytes or None."""
+    return subprocess.run(["instabox", "ssh", name, "--", remote_command], input=stdin, capture_output=True)
+
+
+def ssh(name, script, *, check=True):
+    """Run a script on the box. It travels on stdin, so secrets in it never reach an argv."""
+    wrapper = "bash -c 'umask 077; cat >/dev/shm/orb-step.sh; bash -l /dev/shm/orb-step.sh </dev/null; rc=$?; rm -f /dev/shm/orb-step.sh; exit $rc'"
+    raw = transport(name, wrapper, script.encode())
+    p = subprocess.CompletedProcess(raw.args, raw.returncode, raw.stdout.decode(errors="replace"), raw.stderr.decode(errors="replace"))
+    if check and p.returncode:
+        raise OrbError(f"on {name}: exit {p.returncode}: {((p.stderr or '') + (p.stdout or '')).strip()[-1000:]}")
+    return p
+
+
+def orb_key(repo, branch):
+    """`box` names a machine box-<checkout dir name>-<time>-<pid> (the dir name is cut to 20 characters),
+    so a dir called orb-<repo>-<hash of branch> makes the machine findable by repo and branch."""
+    return f"orb-{repo}-{hashlib.sha1(branch.encode()).hexdigest()[:6]}"
+
+
+def find_orb(key):
+    return next((m for m in machines() if m["name"].startswith(f"box-{key}-")), None)
+
+
+def parse_name(name):
+    m = re.fullmatch(r"box-orb-([a-z0-9]+)-[0-9a-f]{6}-\d+-\d+", name)
+    if not m or m.group(1) not in PROFILES:
+        raise OrbError(f"{name} is not an Orb name. `orb status` lists them.")
+    return PROFILES[m.group(1)]
+
+
+def resolve_secrets(profile):
+    values = {}
+    for key, ref in profile["secrets"].items():
+        p = run(["op", "read", ref], check=False)
+        if p.returncode:
+            raise OrbError(f"cannot read {ref} with op: {p.stderr.strip()}")
+        values[key] = p.stdout.rstrip("\n")
+    return values
+
+
+def exports(values):
+    return "".join(f"export {k}={shlex.quote(v)}\n" for k, v in values.items())
+
+
+def checkout(key, profile, branch):
+    """A clone at the branch tip: `box` fetches this HEAD onto the machine."""
+    d = CACHE / "repos" / key
+    if not d.exists():
+        d.parent.mkdir(parents=True, exist_ok=True)
+        run(["git", "clone", "-q", "--filter=blob:none", f"https://github.com/{profile['slug']}.git", str(d)])
+    run(["git", "-C", str(d), "fetch", "-q", "origin", f"+refs/heads/{branch}:refs/remotes/origin/{branch}"])
+    run(["git", "-C", str(d), "checkout", "-q", "--detach", f"origin/{branch}"])
+    return d, run(["git", "-C", str(d), "rev-parse", "HEAD"]).stdout.strip()
+
+
+def create_machine(key, profile, branch):
+    d, sha = checkout(key, profile, branch)
+    extra = {"BOX_SNAPSHOT": os.environ["ORB_SNAPSHOT"]} if "ORB_SNAPSHOT" in os.environ else {}
+    for attempt in (1, 2):
+        p = subprocess.run([str(BOX), "run", "--keep", "--", "true"], cwd=d, text=True, capture_output=True, env={**os.environ, **extra})
+        found = re.search(r"(box-\S+) is up", p.stderr)
+        if not found:
+            raise OrbError(f"box could not start a machine: {p.stderr.strip()[-600:]}")
+        box_name = found.group(1)
+        if p.returncode == 0:
+            break
+        run(["instabox", "rm", box_name], check=False)
+        if attempt == 2:
+            raise OrbError(f"box failed after creating {box_name}: {p.stderr.strip()[-600:]}")
+        say(f"box exit {p.returncode} ({p.stderr.strip()[-200:]}); retrying once")
+    return box_name, sha
+
+
+def ensure_running(name):
+    state = str(machine(name).get("state", "")).lower()
+    if state != "running":
+        say(f"{name} is {state}; resuming")
+        run(["instabox", "resume", name], check=False)
+        run(["instabox", "wake", name], check=False)
+
+
+def read_meta(name):
+    return json.loads(ssh(name, "cat ~/.orb.json").stdout)
+
+
+def cmd_up(repo, branch):
+    repo = repo.lower().split("/")[-1]
+    if repo not in PROFILES:
+        raise OrbError(f"unknown repo {repo}; known: {', '.join(PROFILES)}")
+    profile = PROFILES[repo]
+    key = orb_key(repo, branch)
+    start = time.monotonic()
+    marks = []
+
+    def mark(label):
+        marks.append((label, time.monotonic() - start))
+        spent = marks[-1][1] - (marks[-2][1] if len(marks) > 1 else 0)
+        say(f"{label}: {spent:.0f}s")
+
+    found = find_orb(key)
+    existing = found is not None
+    sha = None
+    if existing:
+        name = found["name"]
+        say(f"{name} exists; reusing it")
+        ensure_running(name)
+    else:
+        say(f"creating a machine from {os.environ.get('ORB_SNAPSHOT', 'the box default snapshot')}")
+        name, sha = create_machine(key, profile, branch)
+    mark("machine found" if existing else "machine created, branch cloned")
+
+    for port in (profile["port"], PANEL_PORT):
+        if port not in ports(name):
+            run(["instabox", "port", "publish", name, str(port)])
+    urls = ports(name)
+    origin, panel_url = urls[profile["port"]].rstrip("/"), urls[PANEL_PORT].rstrip("/")
+    mark("ports published")
+
+    values = {"PUBLIC_ORIGIN": origin, **resolve_secrets(profile)}
+    meta = ssh(name, "cat ~/.orb.json 2>/dev/null", check=False).stdout.strip()
+    if not meta:
+        meta = json.dumps({"repo": repo, "branch": branch, "sha": sha, "origin": origin, "panel": panel_url})
+    ssh(name, f"umask 077\nprintf '%s' {shlex.quote(meta)} > ~/.orb.json\ncat > /dev/shm/orb.env <<'ORBENV'\n{exports(values)}ORBENV\n"
+              "mkdir -p ~/panel && [ -f ~/panel/index.html ] || echo '<h1>No verification run yet</h1>' > ~/panel/index.html\n"
+              f"tmux has-session -t orbpanel 2>/dev/null || tmux new-session -d -s orbpanel 'cd ~/panel && exec python3 -m http.server {PANEL_PORT} --bind 0.0.0.0'\n")
+    mark("secrets and panel placeholder sent")
+
+    if ssh(name, "tmux has-session -t orb 2>/dev/null", check=False).returncode:
+        ssh(name, "cd ~/work && pnpm install --frozen-lockfile 2>&1 | tail -3")
+        mark("pnpm install")
+        ssh(name, f"cd ~/work && : > /tmp/orb-up.log && tmux new-session -d -s orb \"set -a; . /dev/shm/orb.env; set +a; exec {profile['up']} > /tmp/orb-up.log 2>&1\"")
+    ready = shlex.quote(profile["ready"])
+    out = ssh(name, f"end=$((SECONDS+{READY_TIMEOUT_S}))\n"
+                    f"until grep -qE {ready} /tmp/orb-up.log; do\n"
+                    f"  tmux has-session -t orb 2>/dev/null || {{ echo 'stack exited before ready'; tail -40 /tmp/orb-up.log; exit 1; }}\n"
+                    f"  [ $SECONDS -lt $end ] || {{ echo 'timed out waiting for ready'; tail -40 /tmp/orb-up.log; exit 1; }}\n"
+                    f"  sleep 2\ndone\ngrep -E {ready} /tmp/orb-up.log | tail -1 | sed -E 's/credentials=[^ ]+//'\n").stdout.strip()
+    mark("stack ready")
+    doc = ssh(name, f"set -a; . /dev/shm/orb.env; set +a; cd ~/work && {profile['doctor']}", check=False)
+    if doc.returncode:
+        raise OrbError(f"doctor failed on {name}:\n{(doc.stdout + doc.stderr).strip()[-1500:]}")
+    mark("doctor passed")
+    signin = ssh(name, f"set -a; . /dev/shm/orb.env; set +a; cd ~/work && {profile['signin']}").stdout.strip()
+    drift = ssh(name, "git -C ~/work rev-parse HEAD").stdout.strip()
+    tip = run(["git", "ls-remote", f"https://github.com/{profile['slug']}.git", f"refs/heads/{branch}"], check=False).stdout.split()
+    if tip and tip[0] != drift:
+        say(f"branch moved to {tip[0][:8]}; this Orb runs {drift[:8]}. `orb down` and `orb up` to refresh")
+
+    print(f"orb      {name}")
+    print(f"preview  {origin}/")
+    print(f"panel    {panel_url}/")
+    print(f"sign-in  {signin}")
+    print(f"ready    {out}")
+    print(f"time-to-URL {marks[-1][1]:.0f}s ({', '.join(f'{l} {t:.0f}s' for l, t in marks)})")
+
+
+def cmd_verify(name):
+    profile = parse_name(name)
+    run_id = "orb-" + time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
+    script = ("set -a; . /dev/shm/orb.env; set +a\ncd ~/work\n"
+              f"RUN={run_id}; mkdir -p .verify/$RUN\n"
+              f"( {profile['verify_prep']} ) >/tmp/orb-prep.log 2>&1 || {{ echo 'verify prep failed'; tail -20 /tmp/orb-prep.log; exit 1; }}\n"
+              "rows=''\n")
+    for j, cmd in profile["journeys"].items():
+        script += (f"t=$SECONDS; ( {cmd} ) > .verify/$RUN/{j}.log 2>&1; rc=$?\n"
+                   f"rows=\"$rows{{\\\"journey\\\":\\\"{j}\\\",\\\"exit\\\":$rc,\\\"seconds\\\":$((SECONDS-t))}},\"\n"
+                   f"echo \"{j}: exit $rc\"\n")
+    script += f"echo \"[${{rows%,}}]\" > .verify/$RUN/summary.json\necho {run_id}\n"
+    p = ssh(name, script, check=False)
+    sys.stdout.write(p.stdout)
+    if p.returncode:
+        raise OrbError(f"verify could not run: {p.stderr.strip()[-800:]}")
+    summary = json.loads(ssh(name, f"cat ~/work/.verify/{run_id}/summary.json").stdout)
+    failed = [r["journey"] for r in summary if r["exit"]]
+    if failed:
+        raise OrbError("journeys failed: " + ", ".join(failed))
+
+
+def pull_verify(name, dest):
+    shutil.rmtree(dest, ignore_errors=True)
+    dest.mkdir(parents=True)
+    tar = transport(name, "tar -C ~/work -c .verify")
+    if tar.returncode:
+        raise OrbError(f"cannot copy .verify from {name}: {tar.stderr.decode()[-400:]}")
+    subprocess.run(["tar", "-x", "-C", str(dest)], input=tar.stdout, check=True)
+
+
+def build_panel(name, meta, evidence, out):
+    runs = sorted((d for d in (evidence / ".verify").glob("orb-*") if (d / "summary.json").exists()), key=lambda d: d.name)
+    latest = runs[-1] if runs else None
+    shutil.rmtree(out, ignore_errors=True)
+    (out / "files").mkdir(parents=True)
+    summary = json.loads((latest / "summary.json").read_text()) if latest else []
+    shots, videos, budgets = [], [], []
+    for j in summary:
+        log = latest / f"{j['journey']}.log"
+        if log.exists():
+            shutil.copy2(log, out / "files" / log.name)
+        d = evidence / ".verify" / f"{latest.name}-{j['journey']}"
+        for f in sorted(d.rglob("*")) if d.exists() else []:
+            if not f.is_file():
+                continue
+            rel = f"files/{d.name}/{f.relative_to(d)}"
+            (out / rel).parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(f, out / rel)
+            if f.suffix.lower() in (".png", ".jpg"):
+                shots.append((j["journey"], rel))
+            elif f.suffix.lower() in (".webm", ".mp4"):
+                videos.append((j["journey"], rel))
+            elif f.name == "budgets.json":
+                budgets.append((j["journey"], f.read_text()))
+    pr = run(["gh", "pr", "list", "-R", PROFILES[meta["repo"]]["slug"], "--head", meta["branch"], "--state", "all",
+              "--json", "number,title,body,url,files"], check=False)
+    prs = json.loads(pr.stdout or "[]") if pr.returncode == 0 else []
+    e = html.escape
+    page = [f"<!doctype html><meta charset=utf-8><title>Orb {e(name)}</title>",
+            "<style>body{font:15px/1.5 system-ui;max-width:980px;margin:2rem auto;padding:0 1rem}img,video{max-width:100%;border:1px solid #ccc;margin:.3rem 0}"
+            ".pass{color:#0a7d2c}.fail{color:#b00020}pre{white-space:pre-wrap;background:#f6f6f6;padding:.6rem}</style>",
+            f"<h1>{e(meta['repo'])} · {e(meta['branch'])}</h1><p>Commit <code>{e((meta.get('sha') or '')[:10])}</code> · preview <a href='{e(meta['origin'])}/'>{e(meta['origin'])}</a></p>",
+            "<h2>Journeys</h2>"]
+    if not latest:
+        page.append("<p class=fail>No verification run yet. Run <code>orb verify</code>.</p>")
+    for j in summary:
+        ok = j["exit"] == 0
+        page.append(f"<p class={'pass' if ok else 'fail'}>{'PASS' if ok else 'FAIL'} <b>{e(j['journey'])}</b> ({j['seconds']}s) <a href='files/{e(j['journey'])}.log'>log</a></p>")
+    page.append("<h2>Screenshots</h2>" + ("".join(f"<div><small>{e(j)}</small><br><img src='{e(r)}' loading=lazy></div>" for j, r in shots) or "<p>None.</p>"))
+    page.append("<h2>Recordings</h2>" + ("".join(f"<div><small>{e(j)}</small><br><video src='{e(r)}' controls preload=none></video></div>" for j, r in videos) or "<p>None recorded by this repo's journeys.</p>"))
+    page.append("<h2>Budgets</h2>" + ("".join(f"<p><b>{e(j)}</b></p><pre>{e(t)}</pre>" for j, t in budgets) or "<p>No budget numbers recorded.</p>"))
+    if prs:
+        p = prs[0]
+        page.append(f"<h2>Change story</h2><p><a href='{e(p['url'])}'>#{p['number']} {e(p['title'])}</a></p><pre>{e(p['body'] or '')}</pre>")
+        page.append("<h2>Files touched</h2><ul>" + "".join(f"<li><code>{e(f['path'])}</code> +{f['additions']} −{f['deletions']}</li>" for f in p["files"]) + "</ul>")
+    else:
+        page.append("<h2>Change story</h2><p>No pull request found for this branch.</p>")
+    (out / "index.html").write_text("\n".join(page))
+
+
+def scan_for_secrets(profile, root):
+    values = [v for v in resolve_secrets(profile).values() if len(v) >= 8]
+    for f in root.rglob("*"):
+        if f.is_file() and f.suffix.lower() in (".json", ".log", ".html", ".txt", ".md"):
+            text = f.read_text(errors="ignore")
+            if any(v in text for v in values):
+                raise OrbError(f"a credential appears in {f}; not publishing the panel")
+
+
+def cmd_panel(name, serve=True):
+    profile = parse_name(name)
+    meta = read_meta(name)
+    work = CACHE / "orbs" / name
+    evidence, out = work / "evidence", work / "panel"
+    pull_verify(name, evidence)
+    build_panel(name, meta, evidence, out)
+    scan_for_secrets(profile, out)
+    if serve:
+        tar = subprocess.run(["tar", "-C", str(out), "-c", "."], capture_output=True, check=True).stdout
+        p = transport(name, "rm -rf ~/panel/* && tar -C ~/panel -x", tar)
+        if p.returncode:
+            raise OrbError(f"cannot upload panel: {p.stderr.decode()[-400:]}")
+        print(f"panel    {meta['panel']}/")
+    return out, evidence, meta
+
+
+def cmd_status():
+    for m in machines():
+        n = m["name"]
+        if not n.startswith("box-orb-"):
+            continue
+        urls = ports(n)
+        try:
+            app = urls.get(parse_name(n)["port"], "-")
+        except OrbError:
+            app = "-"
+        print(f"{n}  {m.get('state')}  preview={app}  panel={urls.get(PANEL_PORT, '-')}")
+
+
+def cmd_down(name):
+    profile = parse_name(name)
+    out, evidence, meta = cmd_panel(name, serve=False)
+    branch = re.sub(r"[^A-Za-z0-9._-]+", "-", meta["branch"])
+    dest = PANELS_DIR / meta["repo"] / f"{branch}-{(meta.get('sha') or 'unknown')[:8]}"
+    shutil.rmtree(dest, ignore_errors=True)
+    dest.mkdir(parents=True)
+    shutil.copytree(out, dest / "panel")
+    if (evidence / ".verify").exists():
+        shutil.copytree(evidence / ".verify", dest / ".verify")
+    say(f"saved panel and evidence to {dest}")
+    shutil.rmtree(CACHE / "repos" / re.sub(r"-\d+-\d+$", "", name.removeprefix("box-")), ignore_errors=True)
+    ssh(name, f"set -a; . /dev/shm/orb.env; set +a; cd ~/work && {profile['down']} >/dev/null 2>&1; true", check=False)
+    for _ in range(3):
+        if run(["instabox", "rm", name], check=False).returncode == 0:
+            print(f"deleted {name}\nsaved   {dest}")
+            return
+        time.sleep(10)
+    raise OrbError(f"could not delete {name}; remove it with: instabox rm {name}")
+
+
+def main(argv):
+    try:
+        match argv:
+            case ["up", repo, branch]: cmd_up(repo, branch)
+            case ["verify", name]: cmd_verify(name)
+            case ["panel", name]: cmd_panel(name)
+            case ["status"]: cmd_status()
+            case ["down", name]: cmd_down(name)
+            case _:
+                print(__doc__, file=sys.stderr)
+                return 64
+    except OrbError as e:
+        print(f"orb: {e}", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

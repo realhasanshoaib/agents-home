@@ -1,0 +1,6 @@
+interface:
+  display_name: "Orb"
+  short_description: "Turn a branch into a live preview with a verification panel on an Instabox machine"
+  default_prompt: "Use $orb to bring up, verify and tear down a preview Orb for a branch."
+policy:
+  allow_implicit_invocation: true
